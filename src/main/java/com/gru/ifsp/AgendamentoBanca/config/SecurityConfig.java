@@ -4,7 +4,6 @@ import com.gru.ifsp.AgendamentoBanca.filter.EmailPasswordAuthenticationFilter;
 import com.gru.ifsp.AgendamentoBanca.filter.TokenAuthorizationFilter;
 import com.gru.ifsp.AgendamentoBanca.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         authenticationFilter.setFilterProcessesUrl("/login");
 
         http.csrf().disable();
-        http.authorizeRequests().antMatchers("/login/**","h2-console/**").permitAll();
+        http.authorizeRequests().antMatchers("/login/**","h2-console/**", "/token/refresh/**").permitAll();
         http.authorizeRequests().anyRequest().authenticated();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.headers().frameOptions().disable();
