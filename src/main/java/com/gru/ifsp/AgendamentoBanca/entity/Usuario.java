@@ -1,4 +1,4 @@
-package com.gru.ifsp.AgendamentoBanca.model;
+package com.gru.ifsp.AgendamentoBanca.entity;
 
 
 import lombok.*;
@@ -20,7 +20,7 @@ public class Usuario {
     private Long id;
     private String email;
     private LocalDateTime dataCadastro;
-    @OneToMany(mappedBy = "permissoes")
+    @OneToMany/*(mappedBy = "permissoes")*/
     private List<Permissoes> tipo = new ArrayList<>();
 
 }

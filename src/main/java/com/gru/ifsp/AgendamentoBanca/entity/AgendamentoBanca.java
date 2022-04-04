@@ -1,4 +1,4 @@
-package com.gru.ifsp.AgendamentoBanca.model;
+package com.gru.ifsp.AgendamentoBanca.entity;
 
 
 import lombok.*;
@@ -29,6 +29,9 @@ public class AgendamentoBanca {
     private List<Usuario> participantes = new ArrayList<>();
     @OneToMany
     private List<Usuario> avaliadores = new ArrayList<>();
-    private StatusAgendamento agendamento ;
+    @Enumerated(EnumType.STRING)
+    private StatusAgendamento agendamento;
 
 }
+
+
