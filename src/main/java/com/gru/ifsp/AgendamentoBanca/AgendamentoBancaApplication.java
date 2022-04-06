@@ -1,7 +1,7 @@
 package com.gru.ifsp.AgendamentoBanca;
 
-import com.gru.ifsp.AgendamentoBanca.model.Usuario;
-import com.gru.ifsp.AgendamentoBanca.repository.UserRepository;
+import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
+import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

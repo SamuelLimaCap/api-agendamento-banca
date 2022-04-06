@@ -2,7 +2,7 @@ package com.gru.ifsp.AgendamentoBanca.config;
 
 import com.gru.ifsp.AgendamentoBanca.filter.EmailPasswordAuthenticationFilter;
 import com.gru.ifsp.AgendamentoBanca.filter.TokenAuthorizationFilter;
-import com.gru.ifsp.AgendamentoBanca.service.UserService;
+import com.gru.ifsp.AgendamentoBanca.services.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserService userDetailsService;
+    private final UserServiceImpl userDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

@@ -1,7 +1,7 @@
-package com.gru.ifsp.AgendamentoBanca.service;
+package com.gru.ifsp.AgendamentoBanca.services;
 
-import com.gru.ifsp.AgendamentoBanca.model.Usuario;
-import com.gru.ifsp.AgendamentoBanca.repository.UserRepository;
+import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
+import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Service @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final UserRepository userRepository;
 

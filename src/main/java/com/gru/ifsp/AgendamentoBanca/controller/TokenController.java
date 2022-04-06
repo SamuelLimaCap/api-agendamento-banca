@@ -1,8 +1,8 @@
 package com.gru.ifsp.AgendamentoBanca.controller;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.gru.ifsp.AgendamentoBanca.model.Usuario;
-import com.gru.ifsp.AgendamentoBanca.repository.UserRepository;
+import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
+import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
 import com.gru.ifsp.AgendamentoBanca.util.JwtUtil;
 import com.gru.ifsp.AgendamentoBanca.util.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;

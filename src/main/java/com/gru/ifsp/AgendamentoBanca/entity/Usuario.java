@@ -1,4 +1,4 @@
-package com.gru.ifsp.AgendamentoBanca.model;
+package com.gru.ifsp.AgendamentoBanca.entity;
 
 import lombok.*;
 

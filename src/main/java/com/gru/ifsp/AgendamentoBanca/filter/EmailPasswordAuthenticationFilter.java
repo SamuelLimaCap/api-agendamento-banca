@@ -1,6 +1,6 @@
 package com.gru.ifsp.AgendamentoBanca.filter;
 
-import com.gru.ifsp.AgendamentoBanca.model.Usuario;
+import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
 import com.gru.ifsp.AgendamentoBanca.util.JwtUtil;
 import com.gru.ifsp.AgendamentoBanca.util.ResponseUtils;
 import org.springframework.security.authentication.AuthenticationManager;
