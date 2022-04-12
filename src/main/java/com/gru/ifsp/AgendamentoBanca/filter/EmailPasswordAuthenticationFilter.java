@@ -15,6 +15,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class EmailPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -36,7 +38,7 @@ public class EmailPasswordAuthenticationFilter extends UsernamePasswordAuthentic
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
         User user = (User) authentication.getPrincipal();
-        Usuario usuario = new Usuario(null, user.getUsername(), user.getPassword());
+        Usuario usuario = new Usuario(null, user.getUsername(), user.getPassword(), true, List.of());
         String currentUrl = request.getRequestURL().toString();
 
         String accessToken = JwtUtil.generateAccessToken(usuario, currentUrl);
