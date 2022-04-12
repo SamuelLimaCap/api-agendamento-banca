@@ -1,26 +1,28 @@
 package com.gru.ifsp.AgendamentoBanca.entity;
 
-
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-@Getter
-@Setter
+@Entity
+@Table(name = "usuario")
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @EqualsAndHashCode
-@Entity
 public class Usuario {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private Long id;
+
+    @Getter
+    @Setter
     private String email;
-    private LocalDateTime dataCadastro;
-    @OneToMany/*(mappedBy = "permissoes")*/
-    private List<Permissoes> tipo = new ArrayList<>();
+
+    @Getter
+    @Setter
+    private String password;
+
 
 }
