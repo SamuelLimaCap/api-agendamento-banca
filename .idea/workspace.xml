@@ -4,16 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8e6f0a9a-cd92-4be7-8aee-602d033841bd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+    <list default="true" id="8e6f0a9a-cd92-4be7-8aee-602d033841bd" name="Changes" comment="updates of branch local">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_auth0_java_jwt_3_19_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_validation_jakarta_validation_api_2_0_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hibernate_validator_hibernate_validator_6_2_3_Final.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_devtools_2_6_5.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_validation_2_6_5.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AgendamentoBanca.iml" beforeDir="false" afterPath="$PROJECT_DIR$/AgendamentoBanca.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/controller/AgendamentoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/controller/AgendamentoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/model/AgendamentoBanca.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/entity/AgendamentoBanca.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/model/Permissoes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/entity/Permissoes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/model/StatusAgendamento.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/entity/StatusAgendamento.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/model/TipoBanca.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/entity/TipoBanca.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/model/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/entity/Usuario.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/entity/AgendamentoBanca.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/entity/AgendamentoBanca.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/entity/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/entity/Usuario.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/AgendamentoBancaApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/AgendamentoBancaApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/config/SecurityConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/controller/UsuarioController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/entity/Usuario.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/entity/Usuario.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/repositories/UsuarioRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/services/UsuarioService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/services/UsuarioServiceImpl.class" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,30 +70,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RequestMappingsPanelOrder0" value="0" />
-    <property name="RequestMappingsPanelOrder1" value="1" />
-    <property name="RequestMappingsPanelWidth0" value="75" />
-    <property name="RequestMappingsPanelWidth1" value="75" />
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="node.js.detected.package.eslint" value="true" />
-    <property name="node.js.detected.package.tslint" value="true" />
-    <property name="node.js.selected.package.eslint" value="(autodetect)" />
-    <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="nodejs_package_manager_path" value="npm" />
-    <property name="project.structure.last.edited" value="Project" />
-    <property name="project.structure.proportion" value="0.0" />
-    <property name="project.structure.side.proportion" value="0.0" />
-  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "spring.configuration.checksum": "30c3b4cc3b1d542700bd87422c1d4bdd"
+  }
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.gru.ifsp.AgendamentoBanca.services" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.AgendamentoBancaApplication">
+    <configuration name="AgendamentoBancaApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.gru.ifsp.AgendamentoBanca.AgendamentoBancaApplication" />
+      <module name="AgendamentoBanca" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.gru.ifsp.AgendamentoBanca.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="AgendamentoBancaApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
       <module name="AgendamentoBanca" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.gru.ifsp.AgendamentoBanca.AgendamentoBancaApplication" />
@@ -91,6 +103,11 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.AgendamentoBancaApplication" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -110,6 +127,17 @@
       <workItem from="1648854359888" duration="3099000" />
       <workItem from="1648857906101" duration="888000" />
       <workItem from="1648949856116" duration="4605000" />
+      <workItem from="1649070653032" duration="1439000" />
+      <workItem from="1649616828550" duration="1033000" />
+      <workItem from="1649628492693" duration="64000" />
+      <workItem from="1649674676472" duration="1744000" />
+      <workItem from="1649680457917" duration="2000" />
+      <workItem from="1649700537355" duration="943000" />
+      <workItem from="1649732990012" duration="1810000" />
+      <workItem from="1649760084287" duration="3248000" />
+      <workItem from="1649763480713" duration="464000" />
+      <workItem from="1649850961916" duration="394000" />
+      <workItem from="1650733448807" duration="2591000" />
     </task>
     <task id="LOCAL-00001" summary="include entities">
       <created>1648598280102</created>
@@ -118,7 +146,21 @@
       <option name="project" value="LOCAL" />
       <updated>1648598280102</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="crud agendamento">
+      <created>1649070803947</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1649070803947</updated>
+    </task>
+    <task id="LOCAL-00003" summary="updates of branch local">
+      <created>1649763382346</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1649763382346</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -137,6 +179,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="include entities" />
-    <option name="LAST_COMMIT_MESSAGE" value="include entities" />
+    <MESSAGE value="crud agendamento" />
+    <MESSAGE value="updates of branch local" />
+    <option name="LAST_COMMIT_MESSAGE" value="updates of branch local" />
   </component>
 </project>
