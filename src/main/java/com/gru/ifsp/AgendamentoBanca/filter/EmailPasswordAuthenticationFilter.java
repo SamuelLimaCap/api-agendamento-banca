@@ -1,6 +1,7 @@
 package com.gru.ifsp.AgendamentoBanca.filter;
 
 import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
+import com.gru.ifsp.AgendamentoBanca.entity.springsecurity.AuthUser;
 import com.gru.ifsp.AgendamentoBanca.util.JwtUtil;
 import com.gru.ifsp.AgendamentoBanca.util.ResponseUtils;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,8 +38,8 @@ public class EmailPasswordAuthenticationFilter extends UsernamePasswordAuthentic
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
-        User user = (User) authentication.getPrincipal();
-        Usuario usuario = new Usuario(null, user.getUsername(), user.getPassword(), true, List.of());
+        AuthUser user = (AuthUser) authentication.getPrincipal();
+        Usuario usuario = new Usuario(user.getId(), user.getUsername(), user.getPassword(), true, List.of());
         String currentUrl = request.getRequestURL().toString();
 
         String accessToken = JwtUtil.generateAccessToken(usuario, currentUrl);

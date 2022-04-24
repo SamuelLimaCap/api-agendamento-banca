@@ -75,7 +75,7 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
                 .map(permissao -> new SimpleGrantedAuthority(permissao.getCodeName())).collect(Collectors.toList());
 
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(email, null, authorities);
+                new UsernamePasswordAuthenticationToken(dbUser, null, authorities);
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }

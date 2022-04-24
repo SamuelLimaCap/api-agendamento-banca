@@ -1,14 +1,19 @@
 package com.gru.ifsp.AgendamentoBanca.controller;
 
 import com.gru.ifsp.AgendamentoBanca.entity.AgendamentoBanca;
+import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
 import com.gru.ifsp.AgendamentoBanca.entity.enums.PermissaoEnum;
+import com.gru.ifsp.AgendamentoBanca.entity.springsecurity.AuthUser;
 import com.gru.ifsp.AgendamentoBanca.form.AgendamentoBancaForm;
 import com.gru.ifsp.AgendamentoBanca.response.ResponserHandler;
 import com.gru.ifsp.AgendamentoBanca.services.AgendamentoBancaService;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -35,10 +40,10 @@ public class AgendamentoController {
         try{
             List<AgendamentoBanca> resultado =  agendamentoService.getAll();
             return ResponserHandler.generateResponse("Sucesso ao retornar dados!", HttpStatus.OK, resultado);
-
         } catch (Exception e) {
             return  ResponserHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
+
     }
 
     @PreAuthorize("hasRole('"+ PermissaoEnum.Code.USUARIO+"')")
