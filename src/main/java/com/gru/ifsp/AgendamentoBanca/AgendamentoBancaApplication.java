@@ -29,10 +29,16 @@ public class AgendamentoBancaApplication {
 
             permissaoRepository.saveAll(getAllPermissaoFromPermissaoEnum());
             Permissao permissaoAdmin = permissaoRepository.getByCodeName(PermissaoEnum.ADMIN.name());
+            Permissao permissaoUsuario = permissaoRepository.getByCodeName(PermissaoEnum.USUARIO.name());
 
             userRepository.save(
                     new Usuario(null, "admin@admin.com", passwordEncoder().encode("admin"),
                             true, List.of(permissaoAdmin)
+                    )
+            );
+            userRepository.save(
+                    new Usuario(null, "usuario@usuario.com", passwordEncoder().encode("usuario"),
+                            true, List.of(permissaoUsuario)
                     )
             );
         };

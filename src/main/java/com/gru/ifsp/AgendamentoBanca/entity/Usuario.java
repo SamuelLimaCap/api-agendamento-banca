@@ -29,10 +29,12 @@ public class Usuario {
     @Setter
     private boolean enabled;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "permissao_id", referencedColumnName = "id")
     )
+    @Getter
+    @Setter
     private List<Permissao> permissaoList;
 }

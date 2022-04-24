@@ -29,4 +29,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return new User(user.getEmail(), user.getPassword(), authorities);
 
     }
+
+    public Usuario getUsuario(String email) {
+        return userRepository.findByEmail(email);
+    }
 }
