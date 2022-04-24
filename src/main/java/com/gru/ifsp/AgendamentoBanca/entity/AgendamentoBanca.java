@@ -1,6 +1,9 @@
 package com.gru.ifsp.AgendamentoBanca.entity;
 
 
+import com.gru.ifsp.AgendamentoBanca.entity.enums.StatusAgendamento;
+import com.gru.ifsp.AgendamentoBanca.entity.enums.TipoBanca;
+import com.gru.ifsp.AgendamentoBanca.form.AgendamentoBancaForm;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
@@ -40,19 +43,6 @@ public class AgendamentoBanca {
     private List<Usuario> avaliadores = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     private StatusAgendamento agendamento;
-
-    public AgendamentoBanca(String titulo, String descricao, TipoBanca tipoBanca,
-                            String tema, LocalDateTime dataAgendamento,
-                            LocalDateTime dataCadastro,
-                            StatusAgendamento agendamento) {
-        this.titulo = titulo;
-        this.descricao = descricao;
-        this.tipoBanca = tipoBanca;
-        this.tema = tema;
-        this.dataAgendamento = dataAgendamento;
-        this.dataCadastro = dataCadastro;
-        this.agendamento = agendamento;
-    }
 }
 
 

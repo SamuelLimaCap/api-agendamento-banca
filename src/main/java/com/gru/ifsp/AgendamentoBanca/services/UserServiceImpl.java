@@ -1,6 +1,7 @@
 package com.gru.ifsp.AgendamentoBanca.services;
 
 import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
+import com.gru.ifsp.AgendamentoBanca.entity.springsecurity.AuthUser;
 import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,7 +27,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
 
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        return new User(user.getEmail(), user.getPassword(), authorities);
+        return new AuthUser(user.getEmail(), user.getPassword(), authorities, user.getId());
 
+    }
+
+    public Usuario getUsuario(String email) {
+        return userRepository.findByEmail(email);
     }
 }
