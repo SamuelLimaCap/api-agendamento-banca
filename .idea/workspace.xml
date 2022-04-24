@@ -4,26 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8e6f0a9a-cd92-4be7-8aee-602d033841bd" name="Changes" comment="updates of branch local">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_auth0_java_jwt_3_19_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_validation_jakarta_validation_api_2_0_2.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hibernate_validator_hibernate_validator_6_2_3_Final.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_devtools_2_6_5.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_validation_2_6_5.xml" afterDir="false" />
+    <list default="true" id="8e6f0a9a-cd92-4be7-8aee-602d033841bd" name="Changes" comment="Add PermissaoEnum conversion to roles">
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_validation_jakarta_validation_api_2_0_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_hibernate_validator_hibernate_validator_6_2_3_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_devtools_2_6_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_validation_2_6_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AgendamentoBanca.iml" beforeDir="false" afterPath="$PROJECT_DIR$/AgendamentoBanca.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/controller/AgendamentoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/controller/AgendamentoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/entity/AgendamentoBanca.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/entity/AgendamentoBanca.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/entity/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/entity/Usuario.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/AgendamentoBancaApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/AgendamentoBancaApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/config/SecurityConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/controller/UsuarioController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/entity/Usuario.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/entity/Usuario.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/repositories/UsuarioRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/services/UsuarioService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/gru/ifsp/AgendamentoBanca/services/UsuarioServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/controller/TokenController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gru/ifsp/AgendamentoBanca/controller/AuthController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,7 +31,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="bleeding" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -70,13 +59,13 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "spring.configuration.checksum": "30c3b4cc3b1d542700bd87422c1d4bdd"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;30c3b4cc3b1d542700bd87422c1d4bdd&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.gru.ifsp.AgendamentoBanca.services" />

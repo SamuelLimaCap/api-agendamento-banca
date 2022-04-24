@@ -20,8 +20,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 @RestController
-@RequestMapping("/token")
-public class TokenController {
+@RequestMapping("/auth")
+public class AuthController {
 
     @Autowired
     private UserRepository userRepository;

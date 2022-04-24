@@ -24,15 +24,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        /*
+           Setting route to login
+         */
         EmailPasswordAuthenticationFilter authenticationFilter = new EmailPasswordAuthenticationFilter(this.authenticationManagerBean());
-        authenticationFilter.setFilterProcessesUrl("/login");
+        authenticationFilter.setFilterProcessesUrl("auth/login");
 
+        /*
+         * authentication Management configuration
+         */
         http.csrf().disable();
-        http.authorizeRequests().antMatchers("/login/**","/h2-console/**", "/token/refresh/**").permitAll();
+        http.authorizeRequests().antMatchers("/auth/login/**","/h2-console/**", "/auth/refresh/**").permitAll();
         http.authorizeRequests().anyRequest().authenticated();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.headers().frameOptions().disable();
 
+        /*
+            Add a filter to verify if authentication tokens are valid
+         */
         http.addFilter(authenticationFilter);
         http.addFilterBefore(new TokenAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
