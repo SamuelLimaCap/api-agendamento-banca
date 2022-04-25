@@ -32,7 +32,7 @@ public class AgendamentoBancaAdvice {
 
         return new ResponseEntity(erros, HttpStatus.BAD_REQUEST);
     }
-    /*@ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
     public Map<String, String> handleValidationExceptions(ConstraintViolationException ex){
         Map<String, String> errors = new HashMap<>();
@@ -42,30 +42,5 @@ public class AgendamentoBancaAdvice {
             errors.put(fieldName, errorMessage);
         });
         return errors;
-    }*/
-
-
-    //@ResponseStatus(HttpStatus.BAD_REQUEST)
-    //@ExceptionHandler(ConstraintViolationException.class)
-    /*@ExceptionHandler(Exception.class)
-    public ResponseEntity handleValidationExceptions(ConstraintViolationException ex){
-        Map<String, String> errors = new HashMap<>();
-        ex.getConstraintViolations().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = ((FieldError) error).getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return new ResponseEntity(errors, HttpStatus.BAD_REQUEST);
-    }*/
-
-    /*@ExceptionHandler(Exception.class)
-    public ResponseEntity handleValidationExceptions(Exception ex){
-        Map<String, String> errors = new HashMap<>();
-        ex. forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = ((FieldError) error).getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    }*/
+    }
 }
