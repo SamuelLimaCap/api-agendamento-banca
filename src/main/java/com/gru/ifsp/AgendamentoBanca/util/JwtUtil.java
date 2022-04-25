@@ -17,7 +17,7 @@ import static com.gru.ifsp.AgendamentoBanca.util.Constants.SECRET;
 public class JwtUtil {
 
     private static final int minutes = 60 * 1000;
-    private static final Long ACCESS_TOKEN_VALIDITY = 10L * minutes;
+    private static final Long ACCESS_TOKEN_VALIDITY = 30L * minutes;
     private static final Long REFRESH_TOKEN_VALIDITY = 60L * minutes;
 
     public static final Algorithm signatureAlgorithm = Algorithm.HMAC256(SECRET.getBytes());
