@@ -1,22 +1,18 @@
 package com.gru.ifsp.AgendamentoBanca.controller;
 
 import com.gru.ifsp.AgendamentoBanca.entity.AgendamentoBanca;
-import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
 import com.gru.ifsp.AgendamentoBanca.entity.enums.PermissaoEnum;
-import com.gru.ifsp.AgendamentoBanca.entity.springsecurity.AuthUser;
 import com.gru.ifsp.AgendamentoBanca.form.AgendamentoBancaForm;
 import com.gru.ifsp.AgendamentoBanca.response.ResponserHandler;
 import com.gru.ifsp.AgendamentoBanca.services.AgendamentoBancaService;
-import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -29,9 +25,9 @@ public class AgendamentoController {
 
     @PreAuthorize("hasRole('"+ PermissaoEnum.Code.ADMIN+"')")
     @PostMapping
-    public ResponseEntity<Object> add(@RequestBody AgendamentoBancaForm agendamentoBancaForm) throws Exception {
+    public ResponseEntity<Object> add(@Valid @RequestBody AgendamentoBancaForm agendamentoBancaForm) throws Exception {
             AgendamentoBanca resultado = agendamentoService.add(agendamentoBancaForm);
-            return ResponserHandler.generateResponse("Succeso ao adicionar a banca!", HttpStatus.CREATED, resultado);
+            return ResponserHandler.generateResponse("Succeso ao adicionar a banca!", HttpStatus.CREATED, agendamentoBancaForm);
     }
 
     @PreAuthorize("hasRole('"+ PermissaoEnum.Code.USUARIO+"')")
@@ -41,7 +37,7 @@ public class AgendamentoController {
             List<AgendamentoBanca> resultado =  agendamentoService.getAll();
             return ResponserHandler.generateResponse("Sucesso ao retornar dados!", HttpStatus.OK, resultado);
         } catch (Exception e) {
-            return  ResponserHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
+            return  ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
         }
 
     }
@@ -53,7 +49,7 @@ public class AgendamentoController {
             AgendamentoBanca resultado = agendamentoService.getById(id);
             return ResponserHandler.generateResponse("Sucesso ao retornar dados!", HttpStatus.OK, resultado);
         } catch (Exception e){
-            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
+            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
         }
     }
 
@@ -64,7 +60,7 @@ public class AgendamentoController {
            AgendamentoBanca resultado = agendamentoService.update(parametros, id);
            return ResponserHandler.generateResponse("Atualizado!", HttpStatus.OK, resultado);
        } catch (Exception e){
-            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
+            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
        }
     }
 
@@ -75,7 +71,7 @@ public class AgendamentoController {
             String resultado = agendamentoService.delete(id);
             return ResponserHandler.generateResponse("Excluído!", HttpStatus.OK, resultado);
         } catch( Exception e){
-            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
+            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
         }
     }
 
