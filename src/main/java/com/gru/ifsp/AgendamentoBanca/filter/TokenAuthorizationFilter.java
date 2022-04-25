@@ -55,7 +55,6 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
                     authenticateUser(email);
                     filterChain.doFilter(request, response);
                 } catch (Exception e) {
-                    e.printStackTrace();
                     System.out.println("Error on doFilterInternal: " + e.getMessage());
                     ResponseUtils.showErrorOnResponse(response, FORBIDDEN, e.getMessage());
                 }

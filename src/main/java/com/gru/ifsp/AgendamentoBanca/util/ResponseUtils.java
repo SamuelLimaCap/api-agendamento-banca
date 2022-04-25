@@ -1,6 +1,7 @@
 package com.gru.ifsp.AgendamentoBanca.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gru.ifsp.AgendamentoBanca.response.ResponserHandler;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +27,8 @@ public class ResponseUtils {
         tokenMap.put("refresh_token", refreshToken);
 
         response.setContentType(APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getOutputStream(), tokenMap);
+
+        new ObjectMapper().writeValue(response.getOutputStream(), ResponserHandler.generateMapTemplateResponse("",HttpStatus.OK, tokenMap));
     }
 
 }
