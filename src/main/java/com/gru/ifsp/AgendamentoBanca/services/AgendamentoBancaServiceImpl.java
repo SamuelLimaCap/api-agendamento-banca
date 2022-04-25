@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -25,11 +26,11 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
     @Override
     public AgendamentoBanca add(AgendamentoBancaForm form) throws Exception {
 
-        List<Usuario> avaliadoresUsuarios = userRepository.findAllById(form.getListaIdParticipantes());
-        List<Usuario> participantesUsuarios = userRepository.findAllById(form.getListaIdAvaliadores());
+        List<Usuario> avaliadoresUsuarios = userRepository.findAllById(Arrays.asList(form.getListaIdParticipantes()));
+        List<Usuario> participantesUsuarios = userRepository.findAllById(Arrays.asList(form.getListaIdAvaliadores()));
 
-        if (participantesUsuarios.size() != form.getListaIdParticipantes().size()) throw new Exception("Algum usuário participante nao foi encontrado");
-        if (avaliadoresUsuarios.size() != form.getListaIdAvaliadores().size()) throw new Exception("Algum usuário avaliador nao foi encontrado");
+        if (participantesUsuarios.size() != form.getListaIdParticipantes().length) throw new Exception("Algum usuário participante nao foi encontrado");
+        if (avaliadoresUsuarios.size() != form.getListaIdAvaliadores().length) throw new Exception("Algum usuário avaliador nao foi encontrado");
 
         AgendamentoBanca agendamentoBanca = AgendamentoBancaUtils.createAgendamentoBancaFromForms(form, participantesUsuarios, avaliadoresUsuarios);
 
