@@ -1,5 +1,6 @@
 package com.gru.ifsp.AgendamentoBanca.config;
 
+import com.gru.ifsp.AgendamentoBanca.filter.CorsFilter;
 import com.gru.ifsp.AgendamentoBanca.filter.EmailPasswordAuthenticationFilter;
 import com.gru.ifsp.AgendamentoBanca.filter.TokenAuthorizationFilter;
 import com.gru.ifsp.AgendamentoBanca.services.UserServiceImpl;
@@ -28,17 +29,18 @@ import static com.gru.ifsp.AgendamentoBanca.util.Constants.AUTH_ROUTE;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer{
+public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     private final UserServiceImpl userDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
+
         EmailPasswordAuthenticationFilter authenticationFilter = new EmailPasswordAuthenticationFilter(this.authenticationManagerBean());
         authenticationFilter.setFilterProcessesUrl(AUTH_ROUTE+"/login");
 
         http.csrf().disable();
-        http.cors().disable();
         http.authorizeRequests().antMatchers(AUTH_ROUTE+"/**", "/h2-console/**").permitAll();
         http.authorizeRequests().anyRequest().authenticated();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -46,6 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
         http.addFilter(authenticationFilter);
         http.addFilterBefore(new TokenAuthorizationFilter(userDetailsService), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new CorsFilter(), TokenAuthorizationFilter.class);
 
     }
 
@@ -65,10 +68,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         return new BCryptPasswordEncoder();
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT");
-    }
 }
