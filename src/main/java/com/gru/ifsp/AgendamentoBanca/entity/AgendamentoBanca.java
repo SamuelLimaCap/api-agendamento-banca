@@ -34,7 +34,7 @@ public class AgendamentoBanca {
     @NotBlank(message = "Tema não informado!")
     @Length(min = 2,message = "Quantidade mínima de caracteres não informada!")
     private String tema;
-    @Future
+    @Future(message = "A data de agendamento deve ser uma data futura!")
     private LocalDateTime dataAgendamento;
     private LocalDateTime dataCadastro;
     @OneToMany

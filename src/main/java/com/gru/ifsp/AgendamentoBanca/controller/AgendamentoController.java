@@ -39,7 +39,6 @@ public class AgendamentoController {
         } catch (Exception e) {
             return  ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
         }
-
     }
 
     @PreAuthorize("hasRole('"+ PermissaoEnum.Code.USUARIO+"')")
