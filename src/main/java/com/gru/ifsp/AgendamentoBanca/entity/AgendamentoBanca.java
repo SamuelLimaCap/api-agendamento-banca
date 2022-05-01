@@ -3,11 +3,13 @@ package com.gru.ifsp.AgendamentoBanca.entity;
 
 import com.gru.ifsp.AgendamentoBanca.entity.enums.StatusAgendamento;
 import com.gru.ifsp.AgendamentoBanca.entity.enums.TipoBanca;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -34,7 +36,6 @@ public class AgendamentoBanca {
     @NotBlank(message = "Tema não informado!")
     @Length(min = 2,message = "Quantidade mínima de caracteres não informada!")
     private String tema;
-    @Future
     private LocalDateTime dataAgendamento;
     private LocalDateTime dataCadastro;
     @OneToMany

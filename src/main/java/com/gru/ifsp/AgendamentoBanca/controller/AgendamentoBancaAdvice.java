@@ -1,6 +1,5 @@
 package com.gru.ifsp.AgendamentoBanca.controller;
 
-import com.gru.ifsp.AgendamentoBanca.entity.AgendamentoBanca;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -9,8 +8,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.validation.UnexpectedTypeException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ public class AgendamentoBancaAdvice {
         return new ResponseEntity(erros, HttpStatus.BAD_REQUEST);
     }
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ConstraintViolationException.class)
+    @ExceptionHandler({ConstraintViolationException.class, UnexpectedTypeException.class})
     public Map<String, String> handleValidationExceptions(ConstraintViolationException ex){
         Map<String, String> errors = new HashMap<>();
         ex.getConstraintViolations().forEach((error) -> {
@@ -43,4 +42,15 @@ public class AgendamentoBancaAdvice {
         });
         return errors;
     }
+
+   /* @ExceptionHandler
+    public ResponseEntity validationOfAtributes(ConstraintViolationException ex){
+        Map<String, String> errors = new HashMap<>();
+        ex.getConstraintViolations().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = ((FieldError) error).getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return new ResponseEntity(errors, HttpStatus.BAD_REQUEST);
+    }*/
 }
