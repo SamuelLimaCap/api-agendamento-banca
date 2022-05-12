@@ -19,6 +19,7 @@ public class Usuario {
 
     @Getter
     @Setter
+    @Column(unique = true)
     private String email;
 
     @Getter
@@ -37,4 +38,21 @@ public class Usuario {
     @Getter
     @Setter
     private List<Permissao> permissaoList;
+
+    @Getter
+    @Setter
+    @Column(unique = true)
+    private String prontuario;
+
+    @Getter
+    @Setter
+    private String username;
+
+    public Usuario(Long id, String email, String password, boolean enabled, List<Permissao> permissaoList) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.enabled = enabled;
+        this.permissaoList = permissaoList;
+    }
 }
