@@ -3,6 +3,7 @@ package com.gru.ifsp.AgendamentoBanca.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.List;
 
 @Entity
@@ -10,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@ToString
 public class Usuario {
 
     @Id
@@ -20,6 +22,7 @@ public class Usuario {
     @Getter
     @Setter
     @Column(unique = true)
+    @Email
     private String email;
 
     @Getter
