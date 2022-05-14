@@ -3,6 +3,7 @@ package com.gru.ifsp.AgendamentoBanca.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.List;
 
 @Entity
@@ -10,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@ToString
 public class Usuario {
 
     @Id
@@ -19,6 +21,8 @@ public class Usuario {
 
     @Getter
     @Setter
+    @Column(unique = true)
+    @Email
     private String email;
 
     @Getter
@@ -37,4 +41,21 @@ public class Usuario {
     @Getter
     @Setter
     private List<Permissao> permissaoList;
+
+    @Getter
+    @Setter
+    @Column(unique = true)
+    private String prontuario;
+
+    @Getter
+    @Setter
+    private String username;
+
+    public Usuario(Long id, String email, String password, boolean enabled, List<Permissao> permissaoList) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.enabled = enabled;
+        this.permissaoList = permissaoList;
+    }
 }
