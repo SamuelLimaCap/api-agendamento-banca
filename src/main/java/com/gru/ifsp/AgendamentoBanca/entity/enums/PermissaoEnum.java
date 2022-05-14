@@ -25,6 +25,10 @@ public enum PermissaoEnum implements GrantedAuthority {
         return authority;
     }
 
+    public String codeName() {
+        return this.name();
+    }
+
     public static class Code {
         public static final String ADMIN = "ROLE_ADMIN";
         public static final String USUARIO = "ROLE_USUARIO";
