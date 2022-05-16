@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -74,6 +73,14 @@ public class AgendamentoController {
         }
     }
 
-
-
+    @PreAuthorize("hasRole('"+ PermissaoEnum.Code.ADMIN+"')")
+    @PostMapping(value = "/add-participantes")
+    public ResponseEntity<Object> addParticipante(@RequestBody AgendamentoBancaForm banca){
+        try{
+            agendamentoService.addParticipantes(banca);
+            return ResponserHandler.generateResponse("Participantes incluídos com sucesso!", HttpStatus.OK, banca);
+        } catch( Exception e){
+            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+        }
+    }
 }
