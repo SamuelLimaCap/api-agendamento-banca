@@ -51,6 +51,10 @@ public class Usuario {
     @Setter
     private String username;
 
+    @Getter
+    @Setter
+    private String activationCode;
+
     public Usuario(Long id, String email, String password, boolean enabled, List<Permissao> permissaoList) {
         this.id = id;
         this.email = email;

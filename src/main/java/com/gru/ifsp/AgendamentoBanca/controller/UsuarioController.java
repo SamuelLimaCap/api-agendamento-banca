@@ -2,16 +2,20 @@ package com.gru.ifsp.AgendamentoBanca.controller;
 
 import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
 import com.gru.ifsp.AgendamentoBanca.entity.exceptions.EmailAlreadyExists;
+import com.gru.ifsp.AgendamentoBanca.entity.exceptions.ProntuarioAlreadyExists;
 import com.gru.ifsp.AgendamentoBanca.entity.exceptions.UserNotExistException;
 import com.gru.ifsp.AgendamentoBanca.form.UsuarioForm;
 import com.gru.ifsp.AgendamentoBanca.response.ResponserHandler;
 import com.gru.ifsp.AgendamentoBanca.response.UsuarioResponse;
 import com.gru.ifsp.AgendamentoBanca.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,13 +40,16 @@ public class UsuarioController {
 
             List<String> violations = e.getConstraintViolations().stream()
                     .map(constraintViolation ->
-                            "Campo mal formado:" + constraintViolation.getPropertyPath().toString())
+                            "Campo mal formado: " + constraintViolation.getPropertyPath().toString())
                     .collect(Collectors.toList());
             return ResponserHandler.generateResponse(violations.stream().reduce("\n", String::concat), HttpStatus.BAD_REQUEST, null);
         } catch (EmailAlreadyExists e) {
-            return ResponserHandler.generateResponse("Usuário já existe!", HttpStatus.BAD_REQUEST, null);
+            return ResponserHandler.generateResponse("Email já foi cadastrado anteriormente!", HttpStatus.CONFLICT, null);
+        } catch (ProntuarioAlreadyExists e) {
+            return ResponserHandler.generateResponse("Prontuário já foi cadastrado anteriormente!", HttpStatus.CONFLICT, null);
         }
     }
+
 
     @DeleteMapping("/{email}")
     public ResponseEntity<Object> deleteUser(@PathVariable String email) {

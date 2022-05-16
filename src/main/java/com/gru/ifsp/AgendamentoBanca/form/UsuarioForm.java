@@ -4,6 +4,7 @@ import com.gru.ifsp.AgendamentoBanca.entity.enums.PermissaoEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Validated
 public class UsuarioForm {
     @Email
     private String email;
@@ -22,6 +24,8 @@ public class UsuarioForm {
     private String username;
 
     private PermissaoEnum permission;
+
+    private boolean shouldSendConfirmationCode;
 
 
 
