@@ -1,6 +1,6 @@
-package com.gru.ifsp.AgendamentoBanca.entity;
+package com.gru.ifsp.AgendamentoBanca.model;
 
-import com.gru.ifsp.AgendamentoBanca.entity.enums.StatusAgendamento;
+import com.gru.ifsp.AgendamentoBanca.model.enums.StatusAgendamento;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,9 +30,6 @@ public class UsuarioParticipantesPorBanca {
     @Enumerated(EnumType.STRING)
     StatusAgendamento statusAgendamento = StatusAgendamento.AGUARDANDO;
 
-    public UsuarioParticipantesPorBanca(AgendamentoBanca banca, Usuario usuario, StatusAgendamento statusAgendamento) {
-        this.banca = banca;
-        this.usuario = usuario;
-        this.statusAgendamento = statusAgendamento;
-    }
+   private Boolean isTeacher;
+
 }

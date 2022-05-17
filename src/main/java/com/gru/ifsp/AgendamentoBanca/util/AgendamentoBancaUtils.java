@@ -1,7 +1,7 @@
 package com.gru.ifsp.AgendamentoBanca.util;
 
-import com.gru.ifsp.AgendamentoBanca.entity.AgendamentoBanca;
-import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
+import com.gru.ifsp.AgendamentoBanca.model.AgendamentoBanca;
+import com.gru.ifsp.AgendamentoBanca.model.Usuario;
 import com.gru.ifsp.AgendamentoBanca.form.AgendamentoBancaForm;
 
 import java.time.LocalDateTime;

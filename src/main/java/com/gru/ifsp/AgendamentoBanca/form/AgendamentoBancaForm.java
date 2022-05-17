@@ -1,7 +1,7 @@
 package com.gru.ifsp.AgendamentoBanca.form;
 
-import com.gru.ifsp.AgendamentoBanca.entity.enums.StatusAgendamento;
-import com.gru.ifsp.AgendamentoBanca.entity.enums.TipoBanca;
+import com.gru.ifsp.AgendamentoBanca.model.enums.StatusAgendamento;
+import com.gru.ifsp.AgendamentoBanca.model.enums.TipoBanca;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

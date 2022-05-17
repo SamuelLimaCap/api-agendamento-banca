@@ -1,8 +1,8 @@
-package com.gru.ifsp.AgendamentoBanca.entity;
+package com.gru.ifsp.AgendamentoBanca.model;
 
 
-import com.gru.ifsp.AgendamentoBanca.entity.enums.StatusAgendamento;
-import com.gru.ifsp.AgendamentoBanca.entity.enums.TipoBanca;
+import com.gru.ifsp.AgendamentoBanca.model.enums.StatusAgendamento;
+import com.gru.ifsp.AgendamentoBanca.model.enums.TipoBanca;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 

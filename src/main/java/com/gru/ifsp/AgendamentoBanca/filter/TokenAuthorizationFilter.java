@@ -1,10 +1,8 @@
 package com.gru.ifsp.AgendamentoBanca.filter;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
+import com.gru.ifsp.AgendamentoBanca.model.Usuario;
 import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
-import com.gru.ifsp.AgendamentoBanca.services.UserService;
 import com.gru.ifsp.AgendamentoBanca.services.UserServiceImpl;
 import com.gru.ifsp.AgendamentoBanca.util.Constants;
 import com.gru.ifsp.AgendamentoBanca.util.JwtUtil;
@@ -21,7 +19,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

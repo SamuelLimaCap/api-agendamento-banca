@@ -1,11 +1,10 @@
 package com.gru.ifsp.AgendamentoBanca.services;
 
-import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
-import com.gru.ifsp.AgendamentoBanca.entity.springsecurity.AuthUser;
+import com.gru.ifsp.AgendamentoBanca.model.Usuario;
+import com.gru.ifsp.AgendamentoBanca.model.springsecurity.AuthUser;
 import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

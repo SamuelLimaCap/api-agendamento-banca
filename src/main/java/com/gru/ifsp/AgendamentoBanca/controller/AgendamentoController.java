@@ -1,7 +1,7 @@
 package com.gru.ifsp.AgendamentoBanca.controller;
 
-import com.gru.ifsp.AgendamentoBanca.entity.AgendamentoBanca;
-import com.gru.ifsp.AgendamentoBanca.entity.enums.PermissaoEnum;
+import com.gru.ifsp.AgendamentoBanca.model.AgendamentoBanca;
+import com.gru.ifsp.AgendamentoBanca.model.enums.PermissaoEnum;
 import com.gru.ifsp.AgendamentoBanca.form.AgendamentoBancaForm;
 import com.gru.ifsp.AgendamentoBanca.response.ResponserHandler;
 import com.gru.ifsp.AgendamentoBanca.services.AgendamentoBancaService;

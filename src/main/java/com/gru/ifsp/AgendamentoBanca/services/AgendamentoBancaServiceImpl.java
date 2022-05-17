@@ -1,21 +1,20 @@
 package com.gru.ifsp.AgendamentoBanca.services;
 
-import com.gru.ifsp.AgendamentoBanca.entity.AgendamentoBanca;
-import com.gru.ifsp.AgendamentoBanca.entity.UsuarioParticipantesPorBanca;
-import com.gru.ifsp.AgendamentoBanca.entity.UsuariosParticipantesBancaPK;
-import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
-import com.gru.ifsp.AgendamentoBanca.entity.enums.StatusAgendamento;
-import com.gru.ifsp.AgendamentoBanca.exceptions.BancaNaoEncontradaException;
-import com.gru.ifsp.AgendamentoBanca.exceptions.UsuarioNaoEncontradoException;
+import com.gru.ifsp.AgendamentoBanca.model.AgendamentoBanca;
+import com.gru.ifsp.AgendamentoBanca.model.Usuario;
+import com.gru.ifsp.AgendamentoBanca.model.UsuarioParticipantesPorBanca;
+import com.gru.ifsp.AgendamentoBanca.model.UsuariosParticipantesBancaPK;
+import com.gru.ifsp.AgendamentoBanca.model.enums.StatusAgendamento;
+import com.gru.ifsp.AgendamentoBanca.model.exceptions.BancaNaoEncontradaException;
+import com.gru.ifsp.AgendamentoBanca.model.exceptions.UsuarioNaoEncontradoException;
 import com.gru.ifsp.AgendamentoBanca.form.AgendamentoBancaForm;
 import com.gru.ifsp.AgendamentoBanca.repositories.AgendamentoRepository;
-import com.gru.ifsp.AgendamentoBanca.repositories.UsuariosParticipantesPorBancaRepository;
 import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
+import com.gru.ifsp.AgendamentoBanca.repositories.UsuariosParticipantesPorBancaRepository;
 import com.gru.ifsp.AgendamentoBanca.util.AgendamentoBancaUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -33,18 +32,21 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
     }
 
     @Override
-    public AgendamentoBanca add(AgendamentoBancaForm form) throws Exception {
+    public AgendamentoBanca add(AgendamentoBancaForm form){
 
-        List<Usuario> avaliadoresUsuarios = userRepository.findAllById(Arrays.asList(form.getListaIdParticipantes()));
-        List<Usuario> participantesUsuarios = userRepository.findAllById(Arrays.asList(form.getListaIdAvaliadores()));
+        var alunosIDs = form.getListaIdParticipantes();
+        var professoresIDs = form.getListaIdAvaliadores();
 
-        if (participantesUsuarios.size() != form.getListaIdParticipantes().length) throw new Exception("Algum usuário participante nao foi encontrado");
-        if (avaliadoresUsuarios.size() != form.getListaIdAvaliadores().length) throw new Exception("Algum usuário avaliador nao foi encontrado");
+        var listaAlunos = getListUsuarioByListID(alunosIDs);
+        var listaProfessores = getListUsuarioByListID(professoresIDs);
 
-        AgendamentoBanca agendamentoBanca = AgendamentoBancaUtils.convertFormToAgendamentoBanca(form, participantesUsuarios, avaliadoresUsuarios);
-
+        AgendamentoBanca agendamentoBanca = AgendamentoBancaUtils.convertFormToAgendamentoBanca(form, listaAlunos, listaProfessores);
 
         agendamentoRepository.save(agendamentoBanca);
+        //Add users on banca through the entity responsible for assert relationship beetween banca and users
+        addUsuariosOnBanca(agendamentoBanca, listaAlunos, false);
+        addUsuariosOnBanca(agendamentoBanca,listaProfessores, true);
+
         return agendamentoBanca;
     }
 
@@ -94,8 +96,8 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
         var listaProfessores = getListUsuarioByListID(professoresIDs);
 
         //Add users on banca through the entity responsible for assert relationship beetween banca and users
-        addUsuariosOnBanca(banca, listaAlunos);
-        addUsuariosOnBanca(banca,listaProfessores);
+        addUsuariosOnBanca(banca, listaAlunos, false);
+        addUsuariosOnBanca(banca,listaProfessores, true);
 
         //Refresh the current members of Banca only on banca class
         banca.setParticipantes(listaAlunos);
@@ -109,16 +111,16 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
         return bancaAtualizada;
     }
 
-    private void addUsuariosOnBanca(AgendamentoBanca banca, List<Usuario> usuarios) {
+    private void addUsuariosOnBanca(AgendamentoBanca banca, List<Usuario> usuarios, boolean isTeacher) {
         for(Usuario usuario : usuarios){
-            addUserOnMembersOfBanca(banca, usuario);
+            addUserOnMembersOfBanca(banca, usuario, isTeacher);
         }
     }
 
-    private void addUserOnMembersOfBanca(AgendamentoBanca banca, Usuario usuario) {
+    private void addUserOnMembersOfBanca(AgendamentoBanca banca, Usuario usuario, boolean isTeacher) {
         var usuariosParticipantesBanca = new UsuarioParticipantesPorBanca(
                 new UsuariosParticipantesBancaPK(banca.getId(), usuario.getId()),
-                banca, usuario, StatusAgendamento.AGUARDANDO);
+                banca, usuario, StatusAgendamento.AGUARDANDO, isTeacher);
         usuariosParticipantesPorBancaRepository.save(usuariosParticipantesBanca);
     }
 

@@ -1,4 +1,4 @@
-package com.gru.ifsp.AgendamentoBanca.exceptions;
+package com.gru.ifsp.AgendamentoBanca.model.exceptions;
 
 public class BancaNaoEncontradaException extends RuntimeException{
     public BancaNaoEncontradaException(){

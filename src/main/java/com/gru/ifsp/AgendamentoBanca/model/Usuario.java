@@ -1,18 +1,17 @@
-package com.gru.ifsp.AgendamentoBanca.entity;
+package com.gru.ifsp.AgendamentoBanca.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.List;
 
 @Entity
 @Table(name = "usuario")
-/*@AllArgsConstructor*/
+@AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@ToString
 public class Usuario {
 
     @Id
@@ -22,6 +21,8 @@ public class Usuario {
 
     @Getter
     @Setter
+    @Column(unique = true)
+    @Email
     private String email;
 
     @Getter
@@ -41,13 +42,29 @@ public class Usuario {
     @Setter
     private List<Permissao> permissaoList;
 
+    @Getter
+    @Setter
+    @Column(unique = true)
+    private String prontuario;
+
+    @Getter
+    @Setter
+    private String username;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "banca_id")
     private AgendamentoBanca banca;
-    /*
-    @OneToMany(mappedBy = "participantes")
-    List<AgendamentoUsuarios> participantes;
-    */
+
+    public Usuario(Long id, String email, String password, boolean enabled, List<Permissao> permissaoList, String prontuario, String username) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.enabled = enabled;
+        this.permissaoList = permissaoList;
+        this.prontuario = prontuario;
+        this.username = username;
+    }
+
     public Usuario(Long id, String email, String password, boolean enabled, List<Permissao> permissaoList) {
         this.id = id;
         this.email = email;
@@ -55,14 +72,4 @@ public class Usuario {
         this.enabled = enabled;
         this.permissaoList = permissaoList;
     }
-
-    /*
-    @Getter
-    @Setter
-    private String nome;
-
-    @Getter
-    @Setter
-    private String prontuario;
-    */
 }

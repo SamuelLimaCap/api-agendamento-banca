@@ -1,6 +1,6 @@
 package com.gru.ifsp.AgendamentoBanca.services;
 
-import com.gru.ifsp.AgendamentoBanca.entity.AgendamentoBanca;
+import com.gru.ifsp.AgendamentoBanca.model.AgendamentoBanca;
 import com.gru.ifsp.AgendamentoBanca.form.AgendamentoBancaForm;
 
 import java.util.List;

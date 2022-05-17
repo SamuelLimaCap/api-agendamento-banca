@@ -1,5 +1,6 @@
 package com.gru.ifsp.AgendamentoBanca.config;
 
+import com.gru.ifsp.AgendamentoBanca.filter.CorsFilter;
 import com.gru.ifsp.AgendamentoBanca.filter.EmailPasswordAuthenticationFilter;
 import com.gru.ifsp.AgendamentoBanca.filter.TokenAuthorizationFilter;
 import com.gru.ifsp.AgendamentoBanca.services.UserServiceImpl;
@@ -15,18 +16,27 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 import static com.gru.ifsp.AgendamentoBanca.util.Constants.AUTH_ROUTE;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     private final UserServiceImpl userDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
+
         EmailPasswordAuthenticationFilter authenticationFilter = new EmailPasswordAuthenticationFilter(this.authenticationManagerBean());
         authenticationFilter.setFilterProcessesUrl(AUTH_ROUTE+"/login");
 
@@ -38,6 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.addFilter(authenticationFilter);
         http.addFilterBefore(new TokenAuthorizationFilter(userDetailsService), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new CorsFilter(), TokenAuthorizationFilter.class);
 
     }
 
@@ -56,4 +67,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }
