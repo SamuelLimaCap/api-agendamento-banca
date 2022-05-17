@@ -1,12 +1,9 @@
 package com.gru.ifsp.AgendamentoBanca.response;
 
-import com.gru.ifsp.AgendamentoBanca.entity.Permissao;
-import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
+import com.gru.ifsp.AgendamentoBanca.model.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 @AllArgsConstructor
 @Getter

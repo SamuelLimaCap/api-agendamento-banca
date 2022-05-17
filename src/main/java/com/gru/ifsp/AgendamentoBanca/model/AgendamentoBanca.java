@@ -1,12 +1,9 @@
-package com.gru.ifsp.AgendamentoBanca.entity;
+package com.gru.ifsp.AgendamentoBanca.model;
 
 
-import com.gru.ifsp.AgendamentoBanca.entity.enums.StatusAgendamento;
-import com.gru.ifsp.AgendamentoBanca.entity.enums.TipoBanca;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.gru.ifsp.AgendamentoBanca.model.enums.StatusAgendamento;
+import com.gru.ifsp.AgendamentoBanca.model.enums.TipoBanca;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -19,6 +16,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Setter
 @Getter
 @Entity
@@ -37,13 +35,19 @@ public class AgendamentoBanca {
     @Length(min = 2,message = "Quantidade mínima de caracteres não informada!")
     private String tema;
     private LocalDateTime dataAgendamento;
-    private LocalDateTime dataCadastro;
-    @OneToMany
+    private String dataCadastro;
+
+    @OneToMany(mappedBy = "banca", cascade = CascadeType.ALL)
     private List<Usuario> participantes = new ArrayList<>();
-    @OneToMany
+    @OneToMany(mappedBy = "banca", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Usuario> avaliadores = new ArrayList<>();
+    /*
+    @OneToMany(mappedBy = "banca")
+    List<AgendamentoUsuarios> banca;
+    */
     @Enumerated(EnumType.STRING)
     private StatusAgendamento agendamento;
+
 }
 
 

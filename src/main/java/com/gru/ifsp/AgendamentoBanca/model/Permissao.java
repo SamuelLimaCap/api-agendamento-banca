@@ -1,9 +1,8 @@
-package com.gru.ifsp.AgendamentoBanca.entity;
+package com.gru.ifsp.AgendamentoBanca.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 

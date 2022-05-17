@@ -1,4 +1,4 @@
-package com.gru.ifsp.AgendamentoBanca.entity;
+package com.gru.ifsp.AgendamentoBanca.model;
 
 import lombok.*;
 
@@ -50,6 +50,20 @@ public class Usuario {
     @Getter
     @Setter
     private String username;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "banca_id")
+    private AgendamentoBanca banca;
+
+    public Usuario(Long id, String email, String password, boolean enabled, List<Permissao> permissaoList, String prontuario, String username) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.enabled = enabled;
+        this.permissaoList = permissaoList;
+        this.prontuario = prontuario;
+        this.username = username;
+    }
 
     public Usuario(Long id, String email, String password, boolean enabled, List<Permissao> permissaoList) {
         this.id = id;

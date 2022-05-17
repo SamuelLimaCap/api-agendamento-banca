@@ -1,4 +1,4 @@
-package com.gru.ifsp.AgendamentoBanca.entity.enums;
+package com.gru.ifsp.AgendamentoBanca.model.enums;
 
 import org.springframework.security.core.GrantedAuthority;
 

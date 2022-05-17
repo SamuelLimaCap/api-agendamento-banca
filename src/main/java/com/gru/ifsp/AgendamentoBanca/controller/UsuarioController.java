@@ -1,8 +1,8 @@
 package com.gru.ifsp.AgendamentoBanca.controller;
 
-import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
-import com.gru.ifsp.AgendamentoBanca.entity.exceptions.EmailAlreadyExists;
-import com.gru.ifsp.AgendamentoBanca.entity.exceptions.UserNotExistException;
+import com.gru.ifsp.AgendamentoBanca.model.Usuario;
+import com.gru.ifsp.AgendamentoBanca.model.exceptions.EmailAlreadyExists;
+import com.gru.ifsp.AgendamentoBanca.model.exceptions.UserNotExistException;
 import com.gru.ifsp.AgendamentoBanca.form.UsuarioForm;
 import com.gru.ifsp.AgendamentoBanca.response.ResponserHandler;
 import com.gru.ifsp.AgendamentoBanca.response.UsuarioResponse;
