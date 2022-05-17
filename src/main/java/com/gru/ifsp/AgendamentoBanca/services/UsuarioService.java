@@ -5,12 +5,13 @@ import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
 import com.gru.ifsp.AgendamentoBanca.entity.exceptions.EmailAlreadyExists;
 import com.gru.ifsp.AgendamentoBanca.entity.exceptions.ProntuarioAlreadyExists;
 import com.gru.ifsp.AgendamentoBanca.entity.exceptions.UserNotExistException;
+import com.gru.ifsp.AgendamentoBanca.form.UserActivationForm;
 import com.gru.ifsp.AgendamentoBanca.form.UsuarioForm;
 import com.gru.ifsp.AgendamentoBanca.repositories.PermissaoRepository;
 import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
 import com.gru.ifsp.AgendamentoBanca.response.UsuarioResponse;
+import com.gru.ifsp.AgendamentoBanca.util.EmailSenderUtil;
 import lombok.AllArgsConstructor;
-import org.hibernate.validator.internal.constraintvalidators.bv.EmailValidator;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,70 +34,57 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public Usuario createUser(UsuarioForm usuarioForm) throws EmailAlreadyExists, ProntuarioAlreadyExists {
-        if (usuarioRepository.existsByEmail(usuarioForm.getEmail()))
-            throw new EmailAlreadyExists("Esse email já está cadastrado");
-        if (usuarioRepository.existsByProntuario(usuarioForm.getProntuario()))
-            throw new ProntuarioAlreadyExists("Esse prontuario ja está cadastrado");
 
-        List<Permissao> permissaoList = List.of(permissaoRepository.getByCodeName(usuarioForm.getPermission().name()));
+        validateUsuarioForm(usuarioForm);
+
+        String formProntuarioFormatted = usuarioForm.getProntuario().toUpperCase(Locale.ROOT);
+        String formEmail = usuarioForm.getEmail();
+        String formNomePermissao = usuarioForm.getPermission().name();
+        List<Permissao> permissoes = List.of(permissaoRepository.getByCodeName(formNomePermissao));
         String passwordEncoded = passwordEncoder.encode(usuarioForm.getPassword());
-        String code = "";
-        boolean shouldSendEmail = usuarioForm.isShouldSendConfirmationCode();
-        boolean isEnabled = true;
+        String activationCode = EmailSenderUtil.generateCode();
 
-        if (shouldSendEmail) {
-            isEnabled = false;
-            code = generateCode();
-        }
+        boolean shouldSendEmail = usuarioForm.isShouldSendConfirmationCode();
+        boolean isUserActivated = !shouldSendEmail;
 
         Usuario usuario = new Usuario(null,
-                usuarioForm.getEmail(),
+                formEmail,
                 passwordEncoded,
-                isEnabled,
-                permissaoList,
-                usuarioForm.getProntuario().toUpperCase(Locale.ROOT),
+                isUserActivated,
+                permissoes,
+                formProntuarioFormatted,
                 usuarioForm.getUsername(),
-                code);
+                activationCode);
 
-        usuarioRepository.save(usuario);
+        var userInsertedOnDB = usuarioRepository.save(usuario);
+        boolean isUserInserted = userInsertedOnDB.getId() != null;
 
-        if (shouldSendEmail) {
-            String confirmationCodeLabel = "Código de confirmação:" + code;
-            sendEmail(usuarioForm.getEmail(), confirmationCodeLabel);
+        if (shouldSendEmail && isUserInserted) {
+            sendConfirmationCode(userInsertedOnDB.getEmail(), activationCode);
         }
-
-
         return usuario;
     }
 
-    private String generateCode() {
-        int leftLimit = 97; //letter 'a'
-        int rightLimit = 122; //letter 'b'
-        int stringLength = 6;
-        Random random = new Random();
 
-        String generatedString = random.ints(leftLimit, rightLimit + 1)
-                .limit(stringLength)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
+    private void validateUsuarioForm(UsuarioForm usuarioForm) {
+        String formProntuarioFormatted = usuarioForm.getProntuario().toUpperCase(Locale.ROOT);
+        String formEmail = usuarioForm.getEmail();
 
-        return generatedString;
+        if (usuarioRepository.existsByEmail(formEmail))
+            throw new EmailAlreadyExists("Esse email já está cadastrado");
+        if (usuarioRepository.existsByProntuario(formProntuarioFormatted))
+            throw new ProntuarioAlreadyExists("Esse prontuario ja está cadastrado");
+        if (usuarioForm.getPermission() == null)
+            throw new RuntimeException("Esta permissão/cargo não existe");
     }
 
-    private boolean sendEmail(String email, String confirmationCode) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setText(confirmationCode);
-        message.setTo(email);
-        message.setFrom("samuel.capusesera@aluno.ifsp.edu.br");
 
-        try {
-            javaMailSender.send(message);
-            return true;
-        } catch (MailException e) {
-            e.printStackTrace();
-            return false;
-        }
+    private void sendConfirmationCode(String email, String codeLabel) {
+        String confirmationLabel = "Código de confirmação:";
+        EmailSenderUtil.sendEmail(javaMailSender, email, confirmationLabel + codeLabel);
     }
+
+
 
     public boolean disableUser(String email) {
         if (usuarioRepository.existsByEmail(email)) {
@@ -114,5 +101,42 @@ public class UsuarioService {
         return usuarioRepository.findAll().stream().map(UsuarioResponse::new).collect(Collectors.toList());
     }
 
+    public boolean userExistsByID(Long id) {
+        return usuarioRepository.existsById(id);
+    }
+
+    public boolean isUserActivated(Long id) {
+        var usuario = usuarioRepository.getById(id);
+        return usuario.isEnabled();
+    }
+
+    public void activateUser(UserActivationForm form) {
+        if (!userExistsByID(form.id)) throw new RuntimeException("Não tem usuário com esse ID");
+        if (isUserActivated(form.id)) throw new RuntimeException("Esse usuário já está ativado");
+
+        var usuario = usuarioRepository.getById(form.id);
+
+        if (! form.activationCode.equalsIgnoreCase(usuario.getActivationCode()))
+            throw new RuntimeException("O código passado está invalido!");
+
+        usuario.setEnabled(true);
+        usuario.setActivationCode("");
+        usuarioRepository.save(usuario);
+    }
+
+
+    public void resendActivationCode(String email) {
+        if (!usuarioRepository.existsByEmail(email))
+            throw new RuntimeException("Não existe usuário cadastrado com esse email");
+
+        String newActivationCode = EmailSenderUtil.generateCode();
+        var usuario = usuarioRepository.findByEmail(email);
+
+        if (usuario.isEnabled())
+            throw new RuntimeException("Este usuário já está ativo!");
+
+        usuario.setActivationCode(newActivationCode);
+        EmailSenderUtil.sendEmail(javaMailSender, email, newActivationCode);
+    }
 
 }

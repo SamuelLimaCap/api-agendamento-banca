@@ -4,6 +4,7 @@ import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
 import com.gru.ifsp.AgendamentoBanca.entity.exceptions.EmailAlreadyExists;
 import com.gru.ifsp.AgendamentoBanca.entity.exceptions.ProntuarioAlreadyExists;
 import com.gru.ifsp.AgendamentoBanca.entity.exceptions.UserNotExistException;
+import com.gru.ifsp.AgendamentoBanca.form.UserActivationForm;
 import com.gru.ifsp.AgendamentoBanca.form.UsuarioForm;
 import com.gru.ifsp.AgendamentoBanca.response.ResponserHandler;
 import com.gru.ifsp.AgendamentoBanca.response.UsuarioResponse;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @RestController
@@ -71,5 +73,31 @@ public class UsuarioController {
     public ResponseEntity<Object> listUsers() {
         List<UsuarioResponse> usuarioReponseList = usuarioService.listUsers();
         return ResponserHandler.generateResponse("usuarios retornados com sucesso", HttpStatus.OK, usuarioReponseList);
+    }
+
+    @PostMapping("/activateUser")
+    public ResponseEntity<Object> activateUser(@RequestBody UserActivationForm form) {
+        try {
+            usuarioService.activateUser(form);
+            return ResponserHandler.generateResponse("Usuário ativado com sucesso!!", HttpStatus.OK, null);
+        } catch (RuntimeException e) {
+            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, null);
+        }
+    }
+
+    @PostMapping("/resendActivationCode")
+    public ResponseEntity<Object> resendCode(String email) {
+        try {
+            usuarioService.resendActivationCode(email.toLowerCase(Locale.ROOT));
+            return ResponserHandler.generateResponse("Código reenviado com sucesso!!", HttpStatus.OK, null);
+        } catch (RuntimeException e) {
+            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+        }
     }
 }
