@@ -1,13 +1,15 @@
 package com.gru.ifsp.AgendamentoBanca.controller;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
-import com.gru.ifsp.AgendamentoBanca.entity.exceptions.EmailAlreadyExists;
-import com.gru.ifsp.AgendamentoBanca.entity.exceptions.ProntuarioAlreadyExists;
+import com.gru.ifsp.AgendamentoBanca.model.exceptions.EmailAlreadyExists;
+import com.gru.ifsp.AgendamentoBanca.model.exceptions.ProntuarioAlreadyExists;
 import com.gru.ifsp.AgendamentoBanca.form.UserActivationForm;
 import com.gru.ifsp.AgendamentoBanca.form.UsuarioForm;
 import com.gru.ifsp.AgendamentoBanca.model.Usuario;
 import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
+import com.gru.ifsp.AgendamentoBanca.response.DadosParaAtivacaoResponse;
+import com.gru.ifsp.AgendamentoBanca.response.ResponserHandler;
+import com.gru.ifsp.AgendamentoBanca.services.UsuarioService;
 import com.gru.ifsp.AgendamentoBanca.util.JwtUtil;
 import com.gru.ifsp.AgendamentoBanca.util.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;

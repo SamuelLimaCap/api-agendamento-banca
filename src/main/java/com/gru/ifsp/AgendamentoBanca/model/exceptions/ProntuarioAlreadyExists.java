@@ -1,4 +1,4 @@
-package com.gru.ifsp.AgendamentoBanca.entity.exceptions;
+package com.gru.ifsp.AgendamentoBanca.model.exceptions;
 
 public class ProntuarioAlreadyExists extends RuntimeException{
 

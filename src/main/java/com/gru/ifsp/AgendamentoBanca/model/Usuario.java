@@ -69,6 +69,17 @@ public class Usuario {
         this.username = username;
     }
 
+    public Usuario(Long id, String email, String password, boolean enabled, List<Permissao> permissaoList, String prontuario, String username, String activationCode) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.enabled = enabled;
+        this.permissaoList = permissaoList;
+        this.prontuario = prontuario;
+        this.username = username;
+        this.activationCode = activationCode;
+    }
+
     public Usuario(Long id, String email, String password, boolean enabled, List<Permissao> permissaoList) {
         this.id = id;
         this.email = email;

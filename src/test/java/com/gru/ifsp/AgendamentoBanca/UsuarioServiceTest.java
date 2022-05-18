@@ -7,6 +7,7 @@ import com.gru.ifsp.AgendamentoBanca.model.exceptions.EmailAlreadyExists;
 import com.gru.ifsp.AgendamentoBanca.form.UsuarioForm;
 import com.gru.ifsp.AgendamentoBanca.repositories.PermissaoRepository;
 import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
+import com.gru.ifsp.AgendamentoBanca.response.DadosParaAtivacaoResponse;
 import com.gru.ifsp.AgendamentoBanca.services.UsuarioService;
 import org.assertj.core.api.Assertions;
 import org.junit.Assert;
@@ -17,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
@@ -33,6 +35,9 @@ public class UsuarioServiceTest {
     @Mock
     private PermissaoRepository permissaoRepository;
 
+    @Mock
+    private JavaMailSender javaMailSender;
+
     private UsuarioService usuarioService;
 
     private UsuarioForm form;
@@ -42,13 +47,14 @@ public class UsuarioServiceTest {
     @BeforeEach
     void initUseCase() {
         MockitoAnnotations.openMocks(this);
-        usuarioService = new UsuarioService(userRepository, permissaoRepository);
+        usuarioService = new UsuarioService(userRepository, permissaoRepository, javaMailSender);
         form = new UsuarioForm(
                 "teste@teste.com",
                 "teste123teste",
                 "gu3201565",
                 "usuarioTeste",
-                PermissaoEnum.ADMIN
+                PermissaoEnum.ADMIN,
+                false
         );
         password = new BCryptPasswordEncoder().encode(form.getPassword());
     }
@@ -67,56 +73,9 @@ public class UsuarioServiceTest {
 
         Mockito.when(userRepository.save(Mockito.any(Usuario.class))).thenReturn(returnedUser);
         Mockito.when(permissaoRepository.getByCodeName(Mockito.any(String.class))).thenReturn(new Permissao(0L, PermissaoEnum.ADMIN.name()));
-        Usuario usuario = usuarioService.createUser(form);
+        DadosParaAtivacaoResponse usuario = usuarioService.createUser(form);
 
         Assertions.assertThat(usuario).isNotNull();
-    }
-
-
-    @Test
-    public void shouldCreateUserWithProntuarioOnUpperCase() {
-        Usuario notUpperCaseInsertedUser = new Usuario(null,
-                form.getEmail(),
-                password,
-                false,
-                List.of(),
-                form.getProntuario().toUpperCase(Locale.ROOT),
-                form.getUsername()
-        );
-        Usuario upperCaseInsertedUser = new Usuario(null,
-                form.getEmail(),
-                password,
-                false,
-                List.of(),
-                form.getProntuario().toUpperCase(Locale.ROOT),
-                form.getUsername()
-        );
-        Usuario notUpperCaseReturnedUser = new Usuario(0L,
-                form.getEmail(),
-                password,
-                false,
-                List.of(),
-                form.getProntuario().toUpperCase(Locale.ROOT),
-                form.getUsername()
-        );
-
-        Usuario upperCaseReturnedUser = new Usuario(0L,
-                form.getEmail(),
-                password,
-                false,
-                List.of(),
-                form.getProntuario().toUpperCase(Locale.ROOT),
-                form.getUsername()
-        );
-
-        lenient().when(userRepository.save(notUpperCaseInsertedUser)).thenReturn(notUpperCaseReturnedUser);
-        lenient().when(userRepository.save(upperCaseInsertedUser)).thenReturn(upperCaseReturnedUser);
-        lenient().when(permissaoRepository.getByCodeName(any(String.class))).thenReturn(new Permissao(0L, PermissaoEnum.ADMIN.name()));
-
-        Usuario createdUser = usuarioService.createUser(form);
-        System.out.println(upperCaseReturnedUser.getProntuario());
-        Assertions.assertThat(createdUser.getProntuario()).isEqualTo(upperCaseReturnedUser.getProntuario());
-
     }
 
     @Test
@@ -144,7 +103,7 @@ public class UsuarioServiceTest {
 
 
         lenient().when(userRepository.existsByEmail(form.getEmail())).thenReturn(false);
-        Usuario firstTime = usuarioService.createUser(form);
+        DadosParaAtivacaoResponse firstTime = usuarioService.createUser(form);
 
         lenient().when(userRepository.existsByEmail(form.getEmail())).thenReturn(true);
         EmailAlreadyExists e = Assert.assertThrows(EmailAlreadyExists.class, () -> {usuarioService.createUser(form);});

@@ -1,24 +1,18 @@
 package com.gru.ifsp.AgendamentoBanca.services;
 
-import com.gru.ifsp.AgendamentoBanca.entity.Permissao;
-import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
-import com.gru.ifsp.AgendamentoBanca.entity.exceptions.EmailAlreadyExists;
-import com.gru.ifsp.AgendamentoBanca.entity.exceptions.ProntuarioAlreadyExists;
-import com.gru.ifsp.AgendamentoBanca.entity.exceptions.UserNotExistException;
 import com.gru.ifsp.AgendamentoBanca.form.UserActivationForm;
+import com.gru.ifsp.AgendamentoBanca.form.UsuarioForm;
 import com.gru.ifsp.AgendamentoBanca.model.Permissao;
 import com.gru.ifsp.AgendamentoBanca.model.Usuario;
 import com.gru.ifsp.AgendamentoBanca.model.exceptions.EmailAlreadyExists;
+import com.gru.ifsp.AgendamentoBanca.model.exceptions.ProntuarioAlreadyExists;
 import com.gru.ifsp.AgendamentoBanca.model.exceptions.UserNotExistException;
-import com.gru.ifsp.AgendamentoBanca.form.UsuarioForm;
 import com.gru.ifsp.AgendamentoBanca.repositories.PermissaoRepository;
 import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
 import com.gru.ifsp.AgendamentoBanca.response.DadosParaAtivacaoResponse;
 import com.gru.ifsp.AgendamentoBanca.response.UsuarioResponse;
 import com.gru.ifsp.AgendamentoBanca.util.EmailSenderUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;

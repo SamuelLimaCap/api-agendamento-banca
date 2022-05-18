@@ -1,15 +1,11 @@
 package com.gru.ifsp.AgendamentoBanca.controller;
 
 import com.gru.ifsp.AgendamentoBanca.annotations.IsAdminOrCoordenator;
-import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
-import com.gru.ifsp.AgendamentoBanca.entity.exceptions.EmailAlreadyExists;
-import com.gru.ifsp.AgendamentoBanca.entity.exceptions.ProntuarioAlreadyExists;
-import com.gru.ifsp.AgendamentoBanca.entity.exceptions.UserNotExistException;
+import com.gru.ifsp.AgendamentoBanca.model.exceptions.ProntuarioAlreadyExists;
 import com.gru.ifsp.AgendamentoBanca.form.UserActivationForm;
-import com.gru.ifsp.AgendamentoBanca.model.Usuario;
+import com.gru.ifsp.AgendamentoBanca.form.UsuarioForm;
 import com.gru.ifsp.AgendamentoBanca.model.exceptions.EmailAlreadyExists;
 import com.gru.ifsp.AgendamentoBanca.model.exceptions.UserNotExistException;
-import com.gru.ifsp.AgendamentoBanca.form.UsuarioForm;
 import com.gru.ifsp.AgendamentoBanca.response.ResponserHandler;
 import com.gru.ifsp.AgendamentoBanca.response.UsuarioResponse;
 import com.gru.ifsp.AgendamentoBanca.services.UsuarioService;
