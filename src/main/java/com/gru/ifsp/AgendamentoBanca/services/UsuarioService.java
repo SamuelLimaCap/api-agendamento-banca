@@ -9,6 +9,7 @@ import com.gru.ifsp.AgendamentoBanca.form.UserActivationForm;
 import com.gru.ifsp.AgendamentoBanca.form.UsuarioForm;
 import com.gru.ifsp.AgendamentoBanca.repositories.PermissaoRepository;
 import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
+import com.gru.ifsp.AgendamentoBanca.response.DadosParaAtivacaoResponse;
 import com.gru.ifsp.AgendamentoBanca.response.UsuarioResponse;
 import com.gru.ifsp.AgendamentoBanca.util.EmailSenderUtil;
 import lombok.AllArgsConstructor;
@@ -33,7 +34,7 @@ public class UsuarioService {
     private JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public Usuario createUser(UsuarioForm usuarioForm) throws EmailAlreadyExists, ProntuarioAlreadyExists {
+    public DadosParaAtivacaoResponse createUser(UsuarioForm usuarioForm) throws EmailAlreadyExists, ProntuarioAlreadyExists {
 
         validateUsuarioForm(usuarioForm);
 
@@ -62,7 +63,8 @@ public class UsuarioService {
         if (shouldSendEmail && isUserInserted) {
             sendConfirmationCode(userInsertedOnDB.getEmail(), activationCode);
         }
-        return usuario;
+        var dadosParaAtivacao = new DadosParaAtivacaoResponse(userInsertedOnDB.getId(), userInsertedOnDB.getEmail(), userInsertedOnDB.getActivationCode());
+        return dadosParaAtivacao;
     }
 
 
@@ -85,15 +87,12 @@ public class UsuarioService {
     }
 
 
-
     public boolean disableUser(String email) {
-        if (usuarioRepository.existsByEmail(email)) {
-            //TODO: fazer com que o usuário só se autentique quando estiver com isEnabled = true;
-            Usuario usuario = usuarioRepository.findByEmail(email);
-            usuarioRepository.delete(usuario);
-        } else {
-            throw new UserNotExistException("Este usuário não existe");
-        }
+        if (!usuarioRepository.existsByEmail(email)) throw new UserNotExistException("Este usuário não existe");
+
+        Usuario usuario = usuarioRepository.findByEmail(email);
+        usuario.setEnabled(false);
+
         return true;
     }
 
@@ -116,7 +115,7 @@ public class UsuarioService {
 
         var usuario = usuarioRepository.getById(form.id);
 
-        if (! form.activationCode.equalsIgnoreCase(usuario.getActivationCode()))
+        if (!form.activationCode.equalsIgnoreCase(usuario.getActivationCode()))
             throw new RuntimeException("O código passado está invalido!");
 
         usuario.setEnabled(true);

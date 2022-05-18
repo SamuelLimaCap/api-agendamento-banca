@@ -1,5 +1,6 @@
 package com.gru.ifsp.AgendamentoBanca.controller;
 
+import com.gru.ifsp.AgendamentoBanca.annotations.IsAdminOrCoordenator;
 import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
 import com.gru.ifsp.AgendamentoBanca.entity.exceptions.EmailAlreadyExists;
 import com.gru.ifsp.AgendamentoBanca.entity.exceptions.ProntuarioAlreadyExists;
@@ -10,20 +11,17 @@ import com.gru.ifsp.AgendamentoBanca.response.ResponserHandler;
 import com.gru.ifsp.AgendamentoBanca.response.UsuarioResponse;
 import com.gru.ifsp.AgendamentoBanca.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/usuario")
+@RequestMapping("/users")
 public class UsuarioController {
 
     @Autowired
@@ -33,10 +31,9 @@ public class UsuarioController {
     public ResponseEntity<Object> createUser(@RequestBody UsuarioForm form) {
         try {
 
-            Usuario usuario = usuarioService.createUser(form);
-            usuario.setPassword("");
+            var dadosParaAtivacaoResponse = usuarioService.createUser(form);
 
-            return ResponserHandler.generateResponse("Usuário cadastrado com sucesso!", HttpStatus.OK, usuario);
+            return ResponserHandler.generateResponse("Usuário cadastrado com sucesso!", HttpStatus.OK, dadosParaAtivacaoResponse);
         } catch (ConstraintViolationException e) {
             e.printStackTrace();
 
@@ -53,11 +50,11 @@ public class UsuarioController {
     }
 
 
-    @DeleteMapping("/{email}")
+    @DeleteMapping("/delete/{email}")
+    @IsAdminOrCoordenator
     public ResponseEntity<Object> deleteUser(@PathVariable String email) {
         try {
             if (email.isEmpty()) throw new UserNotExistException("Este usuário não existe");
-            //TODO no momento está deletando o usuário. O correto seria desativa-lo
             usuarioService.disableUser(email);
 
             return ResponserHandler.generateResponse("Usuário removido com sucesso!", HttpStatus.OK, null);
@@ -89,7 +86,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/resendActivationCode")
-    public ResponseEntity<Object> resendCode(String email) {
+    public ResponseEntity<Object> resendCode(@RequestBody String email) {
         try {
             usuarioService.resendActivationCode(email.toLowerCase(Locale.ROOT));
             return ResponserHandler.generateResponse("Código reenviado com sucesso!!", HttpStatus.OK, null);

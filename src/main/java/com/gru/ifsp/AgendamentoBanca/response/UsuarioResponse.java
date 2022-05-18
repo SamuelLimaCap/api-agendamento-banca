@@ -10,9 +10,9 @@ import java.util.List;
 
 @AllArgsConstructor
 @Getter
-@Setter
 public class UsuarioResponse{
 
+    private Long id;
     private String email;
     private boolean isEnabled;
     private String prontuario;
@@ -20,6 +20,7 @@ public class UsuarioResponse{
 
 
     public UsuarioResponse(Usuario usuario) {
+        this.id = usuario.getId();
         this.email = usuario.getEmail();
         this.isEnabled = usuario.isEnabled();
         this.prontuario = usuario.getProntuario();
