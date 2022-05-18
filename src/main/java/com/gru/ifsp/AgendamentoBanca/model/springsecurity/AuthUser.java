@@ -1,4 +1,4 @@
-package com.gru.ifsp.AgendamentoBanca.entity.springsecurity;
+package com.gru.ifsp.AgendamentoBanca.model.springsecurity;
 
 import lombok.Getter;
 import lombok.Setter;

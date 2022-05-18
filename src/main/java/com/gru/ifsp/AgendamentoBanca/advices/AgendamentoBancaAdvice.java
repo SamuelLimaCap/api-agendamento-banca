@@ -1,4 +1,4 @@
-package com.gru.ifsp.AgendamentoBanca.controller;
+package com.gru.ifsp.AgendamentoBanca.advices;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
 package com.gru.ifsp.AgendamentoBanca.services;
 
-import com.gru.ifsp.AgendamentoBanca.entity.AgendamentoBanca;
+import com.gru.ifsp.AgendamentoBanca.model.AgendamentoBanca;
 import com.gru.ifsp.AgendamentoBanca.form.AgendamentoBancaForm;
 
 import java.util.List;
@@ -16,4 +16,6 @@ public interface AgendamentoBancaService {
     AgendamentoBanca update(AgendamentoBanca parametros, Long id);
 
     String delete(Long id);
+
+    AgendamentoBanca addParticipantes(AgendamentoBancaForm banca);
 }

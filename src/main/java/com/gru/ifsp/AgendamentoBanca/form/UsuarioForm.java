@@ -1,6 +1,6 @@
 package com.gru.ifsp.AgendamentoBanca.form;
 
-import com.gru.ifsp.AgendamentoBanca.entity.enums.PermissaoEnum;
+import com.gru.ifsp.AgendamentoBanca.model.enums.PermissaoEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
