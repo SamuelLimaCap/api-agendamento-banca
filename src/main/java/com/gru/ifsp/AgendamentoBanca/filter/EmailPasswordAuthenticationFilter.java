@@ -4,6 +4,7 @@ import com.gru.ifsp.AgendamentoBanca.model.Usuario;
 import com.gru.ifsp.AgendamentoBanca.model.springsecurity.AuthUser;
 import com.gru.ifsp.AgendamentoBanca.util.JwtUtil;
 import com.gru.ifsp.AgendamentoBanca.util.ResponseUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -48,7 +49,6 @@ public class EmailPasswordAuthenticationFilter extends UsernamePasswordAuthentic
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        super.unsuccessfulAuthentication(request, response, failed);
-        System.out.println("failed to authenticate");
+        ResponseUtils.showErrorOnResponse( response, HttpStatus.UNAUTHORIZED, failed.getMessage());
     }
 }

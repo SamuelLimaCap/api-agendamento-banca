@@ -51,6 +51,10 @@ public class Usuario {
     @Setter
     private String username;
 
+    @Getter
+    @Setter
+    private String activationCode;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "banca_id")
     private AgendamentoBanca banca;
@@ -63,6 +67,17 @@ public class Usuario {
         this.permissaoList = permissaoList;
         this.prontuario = prontuario;
         this.username = username;
+    }
+
+    public Usuario(Long id, String email, String password, boolean enabled, List<Permissao> permissaoList, String prontuario, String username, String activationCode) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.enabled = enabled;
+        this.permissaoList = permissaoList;
+        this.prontuario = prontuario;
+        this.username = username;
+        this.activationCode = activationCode;
     }
 
     public Usuario(Long id, String email, String password, boolean enabled, List<Permissao> permissaoList) {

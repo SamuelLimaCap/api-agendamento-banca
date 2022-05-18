@@ -2,6 +2,7 @@ package com.gru.ifsp.AgendamentoBanca.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gru.ifsp.AgendamentoBanca.response.ResponserHandler;
+import com.sun.mail.iap.ResponseHandler;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
@@ -15,8 +16,8 @@ public class ResponseUtils {
 
     public static void showErrorOnResponse(HttpServletResponse response, HttpStatus httpStatus, String errorMessage) throws IOException {
         response.setStatus(httpStatus.value());
-        Map<String, String> responseMap = new HashMap<>();
-        responseMap.put("error", errorMessage);
+        var responseMap = ResponserHandler.generateMapTemplateResponse(errorMessage, httpStatus,"");
+        responseMap.remove("data");
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), responseMap);
     }
