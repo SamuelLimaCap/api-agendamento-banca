@@ -13,9 +13,9 @@ public interface AgendamentoBancaService {
 
     AgendamentoBanca getById(Long id);
 
-    AgendamentoBanca update(AgendamentoBanca parametros, Long id);
+    AgendamentoBancaForm update(AgendamentoBancaForm parametros, Long id);
 
     String delete(Long id);
 
-    AgendamentoBanca addParticipantes(AgendamentoBancaForm banca);
+    AgendamentoBancaForm addParticipantes(AgendamentoBancaForm banca);
 }

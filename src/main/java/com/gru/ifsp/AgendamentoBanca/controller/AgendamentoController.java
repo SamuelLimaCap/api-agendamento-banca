@@ -53,9 +53,9 @@ public class AgendamentoController {
 
     @PreAuthorize("hasRole('"+ PermissaoEnum.Code.USUARIO+"')")
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody AgendamentoBanca parametros){
+    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody AgendamentoBancaForm bancaForm){
        try{
-           AgendamentoBanca resultado = agendamentoService.update(parametros, id);
+           var resultado = agendamentoService.update(bancaForm, id);
            return ResponserHandler.generateResponse("Atualizado!", HttpStatus.OK, resultado);
        } catch (Exception e){
             return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
