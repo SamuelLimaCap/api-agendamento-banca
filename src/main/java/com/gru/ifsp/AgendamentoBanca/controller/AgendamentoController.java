@@ -1,8 +1,8 @@
 package com.gru.ifsp.AgendamentoBanca.controller;
 
+import com.gru.ifsp.AgendamentoBanca.form.AgendamentoBancaForm;
 import com.gru.ifsp.AgendamentoBanca.model.AgendamentoBanca;
 import com.gru.ifsp.AgendamentoBanca.model.enums.PermissaoEnum;
-import com.gru.ifsp.AgendamentoBanca.form.AgendamentoBancaForm;
 import com.gru.ifsp.AgendamentoBanca.response.ResponserHandler;
 import com.gru.ifsp.AgendamentoBanca.services.AgendamentoBancaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/agendamentos")
@@ -33,7 +32,7 @@ public class AgendamentoController {
     @GetMapping
     public ResponseEntity<Object> getAll(){
         try{
-            List<AgendamentoBanca> resultado =  agendamentoService.getAll();
+            var resultado =  agendamentoService.getAll();
             return ResponserHandler.generateResponse("Sucesso ao retornar dados!", HttpStatus.OK, resultado);
         } catch (Exception e) {
             return  ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);

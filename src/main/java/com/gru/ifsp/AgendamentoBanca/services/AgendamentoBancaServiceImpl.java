@@ -63,8 +63,18 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
     }
 
     @Override
-    public List<AgendamentoBanca> getAll() {
-        return agendamentoRepository.findAll();
+    public List<AgendamentoUsuariosForm> getAll() {
+        var allBancas = agendamentoRepository.findAll();
+        return listOfBancas(allBancas);
+    }
+
+    private List<AgendamentoUsuariosForm> listOfBancas(List<AgendamentoBanca> allBancas){
+        List<AgendamentoUsuariosForm> listOfAllBancas = new ArrayList<>();
+        for(var banca : allBancas){
+            var objeto = getBancaAndUsuariosByBancaId(banca.getId());
+            listOfAllBancas.add(objeto);
+        }
+        return listOfAllBancas;
     }
 
     @Override
