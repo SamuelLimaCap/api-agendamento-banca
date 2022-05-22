@@ -1,14 +1,13 @@
 package com.gru.ifsp.AgendamentoBanca.filter;
 
-import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
-import com.gru.ifsp.AgendamentoBanca.entity.springsecurity.AuthUser;
+import com.gru.ifsp.AgendamentoBanca.model.Usuario;
+import com.gru.ifsp.AgendamentoBanca.model.springsecurity.AuthUser;
 import com.gru.ifsp.AgendamentoBanca.util.JwtUtil;
 import com.gru.ifsp.AgendamentoBanca.util.ResponseUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -16,7 +15,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 public class EmailPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {

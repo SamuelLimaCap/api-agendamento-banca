@@ -1,8 +1,8 @@
 package com.gru.ifsp.AgendamentoBanca;
 
-import com.gru.ifsp.AgendamentoBanca.entity.Permissao;
-import com.gru.ifsp.AgendamentoBanca.entity.Usuario;
-import com.gru.ifsp.AgendamentoBanca.entity.enums.PermissaoEnum;
+import com.gru.ifsp.AgendamentoBanca.model.Permissao;
+import com.gru.ifsp.AgendamentoBanca.model.Usuario;
+import com.gru.ifsp.AgendamentoBanca.model.enums.PermissaoEnum;
 import com.gru.ifsp.AgendamentoBanca.repositories.PermissaoRepository;
 import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
