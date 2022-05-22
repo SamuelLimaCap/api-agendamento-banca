@@ -44,7 +44,7 @@ public class AgendamentoController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<Object> getById(@PathVariable Long id){
         try{
-            AgendamentoBanca resultado = agendamentoService.getById(id);
+            var resultado = agendamentoService.getBancaAndUsuariosByBancaId(id);
             return ResponserHandler.generateResponse("Sucesso ao retornar dados!", HttpStatus.OK, resultado);
         } catch (Exception e){
             return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);

@@ -1,6 +1,8 @@
 package com.gru.ifsp.AgendamentoBanca.services;
 
+import com.gru.ifsp.AgendamentoBanca.dtos.UsuarioDto;
 import com.gru.ifsp.AgendamentoBanca.form.AgendamentoBancaForm;
+import com.gru.ifsp.AgendamentoBanca.form.AgendamentoUsuariosForm;
 import com.gru.ifsp.AgendamentoBanca.model.AgendamentoBanca;
 import com.gru.ifsp.AgendamentoBanca.model.Usuario;
 import com.gru.ifsp.AgendamentoBanca.model.UsuarioParticipantesPorBanca;
@@ -71,6 +73,40 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
     }
 
     @Override
+    public AgendamentoUsuariosForm getBancaAndUsuariosByBancaId(Long id) {
+        var banca = getById(id);
+
+        var usuariosParticipantes = usuariosParticipantesPorBancaRepository.returAllMembersOnBanca(id);
+
+
+        var listaParticipantes = splitProfessoresAlunos(usuariosParticipantes);
+
+        var bancaUsuariosForm = new AgendamentoUsuariosForm(banca,
+                listaParticipantes.get(0), listaParticipantes.get(1));
+
+        return bancaUsuariosForm;
+    }
+
+    public List<List<UsuarioDto>> splitProfessoresAlunos(Long[] alunosProfessores){
+        List<UsuarioDto> alunos = new ArrayList<>();
+        List<UsuarioDto> professores = new ArrayList<>();
+
+        for(var usuarioId : alunosProfessores){
+            var user = getUsuarioByID(usuarioId);
+            if(user.getProntuario() != null){
+                alunos.add(new UsuarioDto(user));
+            } else
+                professores.add(new UsuarioDto(user));
+        }
+        List<List<UsuarioDto>> alunosProfesoresSeparados = new ArrayList<>();
+        alunosProfesoresSeparados.add(alunos);
+        alunosProfesoresSeparados.add(professores);
+
+        return alunosProfesoresSeparados;
+    }
+
+
+    @Override
     public AgendamentoBancaForm update(AgendamentoBancaForm bancaForm, Long id) {
 
         AgendamentoBanca agendamento = agendamentoRepository.findById(id)
@@ -89,7 +125,7 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
         //Delete all users in Banca
         deleteAllUsersInBanca(agendamento);
         //Add a new lis of users in Banca
-        var bancaFormAtualizada =addParticipantes(bancaForm);
+        var bancaFormAtualizada = addParticipantes(bancaForm);
         agendamentoRepository.save(agendamento);
         return bancaFormAtualizada;
     }
