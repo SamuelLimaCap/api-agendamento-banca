@@ -1,16 +1,14 @@
 package com.gru.ifsp.AgendamentoBanca.model;
 
 import com.gru.ifsp.AgendamentoBanca.model.enums.StatusAgendamento;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 @Entity
 public class UsuarioParticipantesPorBanca {
 

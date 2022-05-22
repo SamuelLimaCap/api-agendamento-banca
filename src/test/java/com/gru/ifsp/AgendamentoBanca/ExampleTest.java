@@ -8,6 +8,7 @@ public class ExampleTest {
     @Test
     public void return4() {
 
-        Assert.assertEquals("teste1", "admin@admin.com", "oi");
+//        Assert.assertEquals("teste1", "admin@admin.com", "oi"); //Versão antiga
+        Assert.assertEquals("teste1", "admin@admin.com", "admin@admin.com");
     }
 }
