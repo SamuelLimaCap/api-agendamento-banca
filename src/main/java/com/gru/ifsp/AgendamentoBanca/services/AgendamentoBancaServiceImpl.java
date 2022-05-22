@@ -96,6 +96,8 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
 
     @Override
     public String delete(Long id) {
+        var banca = this.getById(id);
+        deleteAllUsersInBanca(banca);
         agendamentoRepository.deleteById(id);
         return "Agendamento(" + id + ")" + " foi excluíddo!";
     }
@@ -152,22 +154,5 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
     private void deleteAllUsersInBanca(AgendamentoBanca banca){
         usuariosParticipantesPorBancaRepository.deleteAllByBancaIs(banca);
     }
-
-    /*
-    private void deleteUsers( List<UsuariosParticipantesBancaPK> listaUsuarios){
-    }
-
-    private UsuariosParticipantesBancaPK createUsuariosParticipanteBancaPK(AgendamentoBancaForm banca, Usuario usuario) {
-               return new UsuariosParticipantesBancaPK(banca.getId(), usuario.getId());
-    }
-
-    private List<UsuariosParticipantesBancaPK> addPKUsuariosOnList(AgendamentoBancaForm banca, List<Usuario> usuarios) {
-        List<UsuariosParticipantesBancaPK> listParticipantes = new ArrayList<>();
-        for(Usuario usuario : usuarios){
-            listParticipantes.add(createUsuariosParticipanteBancaPK(banca, usuario));
-        }
-        return  listParticipantes;
-    }
-    */
 
 }
