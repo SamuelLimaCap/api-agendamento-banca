@@ -20,7 +20,9 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Transactional
 @Service
@@ -89,28 +91,31 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
         var usuariosParticipantes = usuariosParticipantesPorBancaRepository.returAllMembersOnBanca(id);
 
 
-        var listaParticipantes = splitProfessoresAlunos(usuariosParticipantes);
+        var listaParticipantes = splitIntoMapOfProfessorsAndStudents(usuariosParticipantes, banca.getId());
 
         var bancaUsuariosForm = new AgendamentoUsuariosForm(banca,
-                listaParticipantes.get(0), listaParticipantes.get(1));
+                listaParticipantes.get("alunos"), listaParticipantes.get("professores"));
 
         return bancaUsuariosForm;
     }
 
-    public List<List<UsuarioDto>> splitProfessoresAlunos(Long[] alunosProfessores){
+    public Map<String, List<UsuarioDto>> splitIntoMapOfProfessorsAndStudents(Long[] alunosProfessores, Long idBanca){
         List<UsuarioDto> alunos = new ArrayList<>();
         List<UsuarioDto> professores = new ArrayList<>();
 
         for(var usuarioId : alunosProfessores){
             var user = getUsuarioByID(usuarioId);
-            if(user.getProntuario() != null){
-                alunos.add(new UsuarioDto(user));
-            } else
+            if(usuariosParticipantesPorBancaRepository
+                    .verifyUserIsTeacher(user.getId(), idBanca)){
                 professores.add(new UsuarioDto(user));
+            } else
+                alunos.add(new UsuarioDto(user));
         }
-        List<List<UsuarioDto>> alunosProfesoresSeparados = new ArrayList<>();
-        alunosProfesoresSeparados.add(alunos);
-        alunosProfesoresSeparados.add(professores);
+
+
+        Map<String, List<UsuarioDto>> alunosProfesoresSeparados = new HashMap<>();
+        alunosProfesoresSeparados.put("alunos",alunos);
+        alunosProfesoresSeparados.put("professores",professores);
 
         return alunosProfesoresSeparados;
     }
