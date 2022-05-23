@@ -11,6 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserActivationForm {
 
-    public Long id;
+    public String email;
     public String activationCode;
 }

@@ -102,16 +102,25 @@ public class UsuarioService {
         return usuarioRepository.existsById(id);
     }
 
+    public boolean userExistsByEmail(String email) {
+        return usuarioRepository.existsByEmail(email);
+    }
+
     public boolean isUserActivated(Long id) {
         var usuario = usuarioRepository.getById(id);
         return usuario.isEnabled();
     }
 
-    public void activateUser(UserActivationForm form) {
-        if (!userExistsByID(form.id)) throw new RuntimeException("Não tem usuário com esse ID");
-        if (isUserActivated(form.id)) throw new RuntimeException("Esse usuário já está ativado");
+    public boolean isUserActivated(String email) {
+        var usuario = usuarioRepository.findByEmail(email);
+        return usuario.isEnabled();
+    }
 
-        var usuario = usuarioRepository.getById(form.id);
+    public void activateUser(UserActivationForm form) {
+        if (!userExistsByEmail(form.email)) throw new RuntimeException("Não tem usuário com esse email");
+        if (isUserActivated(form.email)) throw new RuntimeException("Esse usuário já está ativado");
+
+        var usuario = usuarioRepository.findByEmail(form.email);
 
         if (!form.activationCode.equalsIgnoreCase(usuario.getActivationCode()))
             throw new RuntimeException("O código passado está invalido!");
