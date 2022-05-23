@@ -1,6 +1,7 @@
 package com.gru.ifsp.AgendamentoBanca.services;
 
-import com.gru.ifsp.AgendamentoBanca.entity.AgendamentoBanca;
+import com.gru.ifsp.AgendamentoBanca.form.AgendamentoUsuariosForm;
+import com.gru.ifsp.AgendamentoBanca.model.AgendamentoBanca;
 import com.gru.ifsp.AgendamentoBanca.form.AgendamentoBancaForm;
 
 import java.util.List;
@@ -9,11 +10,15 @@ import java.util.List;
 public interface AgendamentoBancaService {
     AgendamentoBanca add(AgendamentoBancaForm parametros) throws Exception;
 
-    List<AgendamentoBanca> getAll();
+    List<AgendamentoUsuariosForm> getAll();
 
     AgendamentoBanca getById(Long id);
 
-    AgendamentoBanca update(AgendamentoBanca parametros, Long id);
+    AgendamentoUsuariosForm getBancaAndUsuariosByBancaId(Long id);
+
+    AgendamentoBancaForm update(AgendamentoBancaForm parametros);
 
     String delete(Long id);
+
+    AgendamentoBancaForm addParticipantes(AgendamentoBancaForm banca);
 }

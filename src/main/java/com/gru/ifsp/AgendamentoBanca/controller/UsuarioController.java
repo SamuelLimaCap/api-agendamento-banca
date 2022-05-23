@@ -1,73 +1,38 @@
 package com.gru.ifsp.AgendamentoBanca.controller;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.gru.ifsp.AgendamentoBanca.model.exceptions.EmailAlreadyExists;
+import com.gru.ifsp.AgendamentoBanca.annotations.IsAdminOrCoordenator;
 import com.gru.ifsp.AgendamentoBanca.model.exceptions.ProntuarioAlreadyExists;
 import com.gru.ifsp.AgendamentoBanca.form.UserActivationForm;
 import com.gru.ifsp.AgendamentoBanca.form.UsuarioForm;
-import com.gru.ifsp.AgendamentoBanca.model.Usuario;
-import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
-import com.gru.ifsp.AgendamentoBanca.response.DadosParaAtivacaoResponse;
+import com.gru.ifsp.AgendamentoBanca.model.exceptions.EmailAlreadyExists;
+import com.gru.ifsp.AgendamentoBanca.model.exceptions.UserNotExistException;
 import com.gru.ifsp.AgendamentoBanca.response.ResponserHandler;
+import com.gru.ifsp.AgendamentoBanca.response.UsuarioResponse;
 import com.gru.ifsp.AgendamentoBanca.services.UsuarioService;
-import com.gru.ifsp.AgendamentoBanca.util.JwtUtil;
-import com.gru.ifsp.AgendamentoBanca.util.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import static com.gru.ifsp.AgendamentoBanca.util.Constants.PREFIX_AUTHORIZATION;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-
 @RestController
-@RequestMapping("/auth")
-public class AuthController {
-
-    @Autowired
-    private UserRepository userRepository;
+@RequestMapping("/users")
+public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
 
-    @GetMapping("/refresh")
-    public ResponseEntity<Object> refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        if (authorizationHeader != null && authorizationHeader.startsWith(PREFIX_AUTHORIZATION)) {
-            try {
-                String refreshToken = authorizationHeader.substring(PREFIX_AUTHORIZATION.length());
-                DecodedJWT decodedJWT = JwtUtil.getDecodedJWTFromToken(refreshToken);
-                String email = decodedJWT.getSubject();
-                Usuario user = userRepository.findByEmail(email);
-                String currentUrl = request.getRequestURL().toString();
-
-                String accessToken = JwtUtil.generateAccessToken(user, currentUrl);
-                ResponseUtils.showTokensOnResponse(response, accessToken, refreshToken);
-            } catch (Exception e) {
-                System.out.println("Error on refreshToken: " + e.getMessage());
-
-                ResponseUtils.showErrorOnResponse(response, FORBIDDEN, e.getMessage());
-            }
-        }
-        return ResponseEntity.ok("");
-    }
-
-    @PostMapping("/register")
+    @PostMapping
     public ResponseEntity<Object> createUser(@RequestBody UsuarioForm form) {
         try {
 
-            DadosParaAtivacaoResponse usuario = usuarioService.createUser(form);
+            var dadosParaAtivacaoResponse = usuarioService.createUser(form);
 
-            return ResponserHandler.generateResponse("Usuário cadastrado com sucesso!", HttpStatus.OK, usuario);
+            return ResponserHandler.generateResponse("Usuário cadastrado com sucesso!", HttpStatus.OK, dadosParaAtivacaoResponse);
         } catch (ConstraintViolationException e) {
             e.printStackTrace();
 
@@ -81,6 +46,29 @@ public class AuthController {
         } catch (ProntuarioAlreadyExists e) {
             return ResponserHandler.generateResponse("Prontuário já foi cadastrado anteriormente!", HttpStatus.CONFLICT, null);
         }
+    }
+
+
+    @DeleteMapping("/delete/{email}")
+    @IsAdminOrCoordenator
+    public ResponseEntity<Object> deleteUser(@PathVariable String email) {
+        try {
+            if (email.isEmpty()) throw new UserNotExistException("Este usuário não existe");
+            usuarioService.disableUser(email);
+
+            return ResponserHandler.generateResponse("Usuário removido com sucesso!", HttpStatus.OK, null);
+        } catch (UserNotExistException e) {
+            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> listUsers() {
+        List<UsuarioResponse> usuarioReponseList = usuarioService.listUsers();
+        return ResponserHandler.generateResponse("usuarios retornados com sucesso", HttpStatus.OK, usuarioReponseList);
     }
 
     @PostMapping("/activateUser")
@@ -97,7 +85,7 @@ public class AuthController {
     }
 
     @PostMapping("/resendActivationCode")
-    public ResponseEntity<Object> resendCode(String email) {
+    public ResponseEntity<Object> resendCode(@RequestBody String email) {
         try {
             usuarioService.resendActivationCode(email.toLowerCase(Locale.ROOT));
             return ResponserHandler.generateResponse("Código reenviado com sucesso!!", HttpStatus.OK, null);
@@ -108,5 +96,4 @@ public class AuthController {
             return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
         }
     }
-
 }
