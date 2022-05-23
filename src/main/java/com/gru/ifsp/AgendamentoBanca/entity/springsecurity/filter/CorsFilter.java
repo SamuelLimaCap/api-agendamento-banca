@@ -1,4 +1,4 @@
-package com.gru.ifsp.AgendamentoBanca.filter;
+package com.gru.ifsp.AgendamentoBanca.entity.springsecurity.filter;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;

@@ -31,55 +31,35 @@ public class AgendamentoController {
     @PreAuthorize("hasRole('"+ PermissaoEnum.Code.USUARIO+"')")
     @GetMapping
     public ResponseEntity<Object> getAll(){
-        try{
-            var resultado =  agendamentoService.getAll();
-            return ResponserHandler.generateResponse("Sucesso ao retornar dados!", HttpStatus.OK, resultado);
-        } catch (Exception e) {
-            return  ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
-        }
+        var resultado =  agendamentoService.getAll();
+        return ResponserHandler.generateResponse("Sucesso ao retornar dados!", HttpStatus.OK, resultado);
     }
 
     @PreAuthorize("hasRole('"+ PermissaoEnum.Code.USUARIO+"')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<Object> getById(@PathVariable Long id){
-        try{
-            var resultado = agendamentoService.getBancaAndUsuariosByBancaId(id);
-            return ResponserHandler.generateResponse("Sucesso ao retornar dados!", HttpStatus.OK, resultado);
-        } catch (Exception e){
-            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
-        }
+        var resultado = agendamentoService.getBancaAndUsuariosByBancaId(id);
+        return ResponserHandler.generateResponse("Sucesso ao retornar dados!", HttpStatus.OK, resultado);
     }
 
     @PreAuthorize("hasRole('"+ PermissaoEnum.Code.USUARIO+"')")
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody AgendamentoBancaForm bancaForm){
-       try{
-           var resultado = agendamentoService.update(bancaForm, id);
-           return ResponserHandler.generateResponse("Atualizado!", HttpStatus.OK, resultado);
-       } catch (Exception e){
-            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
-       }
+    @PutMapping
+    public ResponseEntity<Object> update(@RequestBody AgendamentoBancaForm bancaForm){
+       var resultado = agendamentoService.update(bancaForm);
+       return ResponserHandler.generateResponse("Atualizado!", HttpStatus.OK, resultado);
     }
 
     @PreAuthorize("hasRole('"+ PermissaoEnum.Code.ADMIN+"')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Object> delete(@PathVariable Long id){
-        try{
-            String resultado = agendamentoService.delete(id);
-            return ResponserHandler.generateResponse("Excluído!", HttpStatus.OK, resultado);
-        } catch( Exception e){
-            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
-        }
+        String resultado = agendamentoService.delete(id);
+        return ResponserHandler.generateResponse("Excluído!", HttpStatus.OK, resultado);
     }
 
     @PreAuthorize("hasRole('"+ PermissaoEnum.Code.ADMIN+"')")
     @PostMapping(value = "/add-participantes")
     public ResponseEntity<Object> addParticipante(@RequestBody AgendamentoBancaForm banca){
-        try{
-            agendamentoService.addParticipantes(banca);
-            return ResponserHandler.generateResponse("Participantes incluídos com sucesso!", HttpStatus.OK, banca);
-        } catch( Exception e){
-            return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
-        }
+        agendamentoService.addParticipantes(banca);
+        return ResponserHandler.generateResponse("Participantes incluídos com sucesso!", HttpStatus.OK, banca);
     }
 }

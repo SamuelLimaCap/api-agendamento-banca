@@ -1,5 +1,6 @@
 package com.gru.ifsp.AgendamentoBanca.advices;
 
+import com.gru.ifsp.AgendamentoBanca.response.ResponserHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -7,14 +8,19 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.UnexpectedTypeException;
 import java.util.HashMap;
 import java.util.Map;
 
-@ControllerAdvice
+import static com.gru.ifsp.AgendamentoBanca.response.ResponserHandler.generateMapTemplateResponse;
+
+@RestControllerAdvice
 public class AgendamentoBancaAdvice {
+
+
 
     @ExceptionHandler()
     public ResponseEntity tratarRestricoesBean(MethodArgumentNotValidException e){
@@ -43,14 +49,11 @@ public class AgendamentoBancaAdvice {
         return errors;
     }
 
-   /* @ExceptionHandler
-    public ResponseEntity validationOfAtributes(ConstraintViolationException ex){
-        Map<String, String> errors = new HashMap<>();
-        ex.getConstraintViolations().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = ((FieldError) error).getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return new ResponseEntity(errors, HttpStatus.BAD_REQUEST);
-    }*/
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({Exception.class})
+    public static ResponseEntity<Object> treatErrorsException(Exception e){
+        return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+    }
+
 }

@@ -88,10 +88,12 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
     public AgendamentoUsuariosForm getBancaAndUsuariosByBancaId(Long id) {
         var banca = getById(id);
 
-        var usuariosParticipantes = usuariosParticipantesPorBancaRepository.returAllMembersOnBanca(id);
+        var usuariosParticipantes = usuariosParticipantesPorBancaRepository
+                .returAllMembersOnBanca(id);
 
 
-        var listaParticipantes = splitIntoMapOfProfessorsAndStudents(usuariosParticipantes, banca.getId());
+        var listaParticipantes = splitIntoMapOfProfessorsAndStudents
+                (usuariosParticipantes, banca.getId());
 
         var bancaUsuariosForm = new AgendamentoUsuariosForm(banca,
                 listaParticipantes.get("alunos"), listaParticipantes.get("professores"));
@@ -122,9 +124,9 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
 
 
     @Override
-    public AgendamentoBancaForm update(AgendamentoBancaForm bancaForm, Long id) {
+    public AgendamentoBancaForm update(AgendamentoBancaForm bancaForm) {
 
-        AgendamentoBanca agendamento = agendamentoRepository.findById(id)
+        AgendamentoBanca agendamento = agendamentoRepository.findById(bancaForm.getId())
                 .orElseThrow(BancaNaoEncontradaException::new);
 
         var dataAgendamentoAtualizada = LocalDateTime

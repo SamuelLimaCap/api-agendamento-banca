@@ -1,4 +1,4 @@
-package com.gru.ifsp.AgendamentoBanca.filter;
+package com.gru.ifsp.AgendamentoBanca.entity.springsecurity.filter;
 
 import com.gru.ifsp.AgendamentoBanca.model.Usuario;
 import com.gru.ifsp.AgendamentoBanca.model.springsecurity.AuthUser;
