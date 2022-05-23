@@ -8,10 +8,10 @@ public enum PermissaoEnum implements GrantedAuthority {
         Quando for adicionar, adicione também na classe "Code"
      */
     ADMIN(Code.ADMIN),
-    USUARIO(Code.USUARIO),
-    ALUNO(Code.ALUNO),
+    COORDENADOR(Code.COORDENADOR),
     PROFESSOR(Code.PROFESSOR),
-    COORDENADOR(Code.COORDENADOR);
+    ALUNO(Code.ALUNO),
+    USUARIO(Code.USUARIO);
 
 
     private final String authority;
