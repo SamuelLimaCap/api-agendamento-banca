@@ -60,8 +60,18 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
         return agendamentoBanca;
     }
 
-    private void checkyIfCanCreateAgendamentoOnThisTime(String dataAgendamento) {
-//        TODO
+    private void checkyIfCanCreateAgendamentoOnThisTime(String dataAgendamento) throws RuntimeException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        var data = LocalDateTime.parse(dataAgendamento, formatter);
+
+
+        var horarios = agendamentoRepository
+                .findByDataAgendamentoBetween(data.minusMinutes(50),
+                        data.plusMinutes(50));
+
+        if(horarios.size() > 0){
+            throw new RuntimeException("Banca não pode ser cadastrada neste horário");
+        }
     }
 
     @Override
