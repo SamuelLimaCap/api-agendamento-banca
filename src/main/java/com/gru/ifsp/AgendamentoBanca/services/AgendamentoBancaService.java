@@ -21,4 +21,6 @@ public interface AgendamentoBancaService {
     String delete(Long id);
 
     AgendamentoBancaForm addParticipantes(AgendamentoBancaForm banca);
+
+    void updateUserForAdmin(Long idBanca, Long idUsuario, boolean permission);
 }

@@ -19,10 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Transactional
 @Service
@@ -56,9 +53,35 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
         //Add users on banca through the entity responsible for assert relationship beetween banca and users
         addUsuariosOnBanca(agendamentoBanca, listaAlunos, false);
         addUsuariosOnBanca(agendamentoBanca,listaProfessores, true);
-
+        //Set who is admin of banca
+        setAdminsOfBanca(agendamentoBanca,form.getAdminBanca());
         return agendamentoBanca;
     }
+
+    private void setAdminsOfBanca(AgendamentoBanca banca, Long[] adminsBanca) {
+        List<UsuarioParticipantesPorBanca> listaProfessores = usuariosParticipantesPorBancaRepository.findAllByBancaIsAndIsTeacher(banca, true);
+        if(listaProfessores.size() > 0){
+            listaProfessores.forEach(professor -> Arrays.stream(adminsBanca).forEach(id -> {
+                if (Objects.equals(id, professor.getUsuario().getId())) {
+                    professor.setIsAdmin(true);
+                }
+            }));
+            usuariosParticipantesPorBancaRepository.saveAll(listaProfessores);
+        } else{
+            throw new RuntimeException("Não há usuários permitidos para admistrar bancas");
+        }
+    }
+
+    public void updateUserForAdmin(Long idBanca, Long idUsuario, boolean permission){
+        var usarioOnBanca = usuariosParticipantesPorBancaRepository
+                .findByBancaAndUsuario(
+                        agendamentoRepository.getById(idBanca),
+                        getUsuarioByID(idUsuario)).orElseThrow(UsuarioNaoEncontradoException::new);
+        usarioOnBanca.setIsAdmin(permission);
+        usuariosParticipantesPorBancaRepository.save(usarioOnBanca);
+    }
+
+
 
     private void checkyIfCanCreateAgendamentoOnThisTime(String dataAgendamento) {
 //        TODO
@@ -184,7 +207,7 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
     private void addUserOnMembersOfBanca(AgendamentoBanca banca, Usuario usuario, boolean isTeacher) {
         var usuariosParticipantesBanca = new UsuarioParticipantesPorBanca(
                 new UsuariosParticipantesBancaPK(banca.getId(), usuario.getId()),
-                banca, usuario, StatusAgendamento.AGUARDANDO, isTeacher);
+                banca, usuario, StatusAgendamento.AGUARDANDO, isTeacher, null);
         usuariosParticipantesPorBancaRepository.save(usuariosParticipantesBanca);
     }
 
