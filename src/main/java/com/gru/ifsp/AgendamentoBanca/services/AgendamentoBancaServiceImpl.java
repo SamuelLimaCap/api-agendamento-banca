@@ -10,6 +10,7 @@ import com.gru.ifsp.AgendamentoBanca.model.UsuariosParticipantesBancaPK;
 import com.gru.ifsp.AgendamentoBanca.model.enums.StatusAgendamento;
 import com.gru.ifsp.AgendamentoBanca.model.exceptions.BancaNaoEncontradaException;
 import com.gru.ifsp.AgendamentoBanca.model.exceptions.UsuarioNaoEncontradoException;
+import com.gru.ifsp.AgendamentoBanca.model.exceptions.UsuarioNaoEncontradoNaBanca;
 import com.gru.ifsp.AgendamentoBanca.repositories.AgendamentoRepository;
 import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
 import com.gru.ifsp.AgendamentoBanca.repositories.UsuariosParticipantesPorBancaRepository;
@@ -38,6 +39,7 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
 
     @Override
     public AgendamentoBanca add(AgendamentoBancaForm form){
+        checkyIfCanCreateAgendamentoOnThisTime(form.getDataAgendamento());
 
         var alunosIDs = form.getListaIdParticipantes();
         var professoresIDs = form.getListaIdAvaliadores();
@@ -45,16 +47,14 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
         var listaAlunos = getListUsuarioByListID(alunosIDs);
         var listaProfessores = getListUsuarioByListID(professoresIDs);
 
-        checkyIfCanCreateAgendamentoOnThisTime(form.getDataAgendamento());
-
-        AgendamentoBanca agendamentoBanca = AgendamentoBancaUtils.convertFormToAgendamentoBanca(form, listaAlunos, listaProfessores);
+       AgendamentoBanca agendamentoBanca = AgendamentoBancaUtils.convertFormToAgendamentoBanca(form, listaAlunos, listaProfessores);
 
         agendamentoRepository.save(agendamentoBanca);
         //Add users on banca through the entity responsible for assert relationship beetween banca and users
         addUsuariosOnBanca(agendamentoBanca, listaAlunos, false);
         addUsuariosOnBanca(agendamentoBanca,listaProfessores, true);
         //Set who is admin of banca
-        setAdminsOfBanca(agendamentoBanca,form.getAdminBanca());
+        setAdminsOfBanca(agendamentoBanca,form.getAdminsBanca());
         return agendamentoBanca;
     }
 
@@ -73,18 +73,34 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
     }
 
     public void updateUserForAdmin(Long idBanca, Long idUsuario, boolean permission){
+        var banca = getById(idBanca);
+        var usuario = userRepository.findById(idUsuario).orElseThrow(UsuarioNaoEncontradoNaBanca::new);
         var usarioOnBanca = usuariosParticipantesPorBancaRepository
-                .findByBancaAndUsuario(
-                        agendamentoRepository.getById(idBanca),
-                        getUsuarioByID(idUsuario)).orElseThrow(UsuarioNaoEncontradoException::new);
+                .findByBancaAndUsuario(banca, usuario).get();
+
         usarioOnBanca.setIsAdmin(permission);
         usuariosParticipantesPorBancaRepository.save(usarioOnBanca);
     }
 
+    private LocalDateTime DateStringToLocalDateTime(String date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        return LocalDateTime.parse(date, formatter);
+    }
 
+    private void checkyIfCanCreateAgendamentoOnThisTime(String dataAgendamento) throws RuntimeException {
+        var data = DateStringToLocalDateTime(dataAgendamento);
 
-    private void checkyIfCanCreateAgendamentoOnThisTime(String dataAgendamento) {
-//        TODO
+        var horarios = agendamentoRepository
+                .findByDataAgendamentoBetween(data.minusMinutes(50),
+                        data.plusMinutes(50));
+
+        if(horarios.size() > 0){
+           for(var horario : horarios){
+               if(!(data == horario.getDataAgendamento()) && horarios.size() > 1){
+                   throw new RuntimeException("Banca não pode ser cadastrada neste horário");
+               }
+           }
+        }
     }
 
     @Override
@@ -108,9 +124,8 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
     }
 
     @Override
-    public AgendamentoUsuariosForm getBancaAndUsuariosByBancaId(Long id) {
+    public AgendamentoUsuariosForm getBancaAndUsuariosByBancaId(Long id){
         var banca = getById(id);
-
         var usuariosParticipantes = usuariosParticipantesPorBancaRepository
                 .returAllMembersOnBanca(id);
 
@@ -118,31 +133,41 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
         var listaParticipantes = splitIntoMapOfProfessorsAndStudents
                 (usuariosParticipantes, banca.getId());
 
-        var bancaUsuariosForm = new AgendamentoUsuariosForm(banca,
-                listaParticipantes.get("alunos"), listaParticipantes.get("professores"));
-
-        return bancaUsuariosForm;
+        return new AgendamentoUsuariosForm(banca,
+                listaParticipantes.get("alunos"), listaParticipantes.get("professores"), listaParticipantes.get("administradores"));
     }
 
     public Map<String, List<UsuarioDto>> splitIntoMapOfProfessorsAndStudents(Long[] alunosProfessores, Long idBanca){
         List<UsuarioDto> alunos = new ArrayList<>();
         List<UsuarioDto> professores = new ArrayList<>();
+        var administradores = returnAllAdminsOfABanca(idBanca);
 
         for(var usuarioId : alunosProfessores){
             var user = getUsuarioByID(usuarioId);
             if(usuariosParticipantesPorBancaRepository
                     .verifyUserIsTeacher(user.getId(), idBanca)){
                 professores.add(new UsuarioDto(user));
+
             } else
                 alunos.add(new UsuarioDto(user));
         }
 
-
         Map<String, List<UsuarioDto>> alunosProfesoresSeparados = new HashMap<>();
         alunosProfesoresSeparados.put("alunos",alunos);
         alunosProfesoresSeparados.put("professores",professores);
+        alunosProfesoresSeparados.put("administradores", administradores);
 
         return alunosProfesoresSeparados;
+    }
+
+    public List<UsuarioDto> returnAllAdminsOfABanca(Long idBanca){
+        List<UsuarioDto> administradores = new ArrayList<>();
+        var usersAdmins = usuariosParticipantesPorBancaRepository.findAllByIsAdmin(idBanca);
+        for(var id : usersAdmins){
+            var user = getUsuarioByID(id);
+            administradores.add(new UsuarioDto(user));
+        }
+        return administradores;
     }
 
 
@@ -152,9 +177,10 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
         AgendamentoBanca agendamento = agendamentoRepository.findById(bancaForm.getId())
                 .orElseThrow(BancaNaoEncontradaException::new);
 
-        var dataAgendamentoAtualizada = LocalDateTime
-                .parse(bancaForm.getDataAgendamento(),
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        var dataAgendamentoAtualizada = DateStringToLocalDateTime(bancaForm.getDataAgendamento());
+
+        //validate date agendamento
+        checkyIfCanCreateAgendamentoOnThisTime(bancaForm.getDataAgendamento());
 
         agendamento.setTitulo(bancaForm.getTitulo());
         agendamento.setDescricao(bancaForm.getDescricao());
@@ -164,8 +190,10 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
         agendamento.setAgendamento(bancaForm.getStatusAgendamento());
         //Delete all users in Banca
         deleteAllUsersInBanca(agendamento);
-        //Add a new lis of users in Banca
+        //Add a new list of users in Banca
         var bancaFormAtualizada = addParticipantes(bancaForm);
+        //update admins of a banca
+        setAdminsOfBanca(agendamento, bancaForm.getAdminsBanca());
         agendamentoRepository.save(agendamento);
         return bancaFormAtualizada;
     }
@@ -186,8 +214,6 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
 
         var listaAlunos = getListUsuarioByListID(alunosIDs);
         var listaProfessores = getListUsuarioByListID(professoresIDs);
-
-        checkyIfCanCreateAgendamentoOnThisTime(bancaForm.getDataAgendamento());
 
         AgendamentoBanca agendamentoBanca = AgendamentoBancaUtils.convertFormToAgendamentoBanca(bancaForm, listaAlunos, listaProfessores);
 
