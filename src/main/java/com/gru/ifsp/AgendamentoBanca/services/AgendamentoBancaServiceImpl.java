@@ -13,6 +13,7 @@ import com.gru.ifsp.AgendamentoBanca.model.exceptions.UsuarioNaoEncontradoExcept
 import com.gru.ifsp.AgendamentoBanca.repositories.AgendamentoRepository;
 import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
 import com.gru.ifsp.AgendamentoBanca.repositories.UsuariosParticipantesPorBancaRepository;
+import com.gru.ifsp.AgendamentoBanca.services.contracts.EmailService;
 import com.gru.ifsp.AgendamentoBanca.util.AgendamentoBancaUtils;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -33,10 +35,13 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
     private final  UserRepository userRepository;
     private final UsuariosParticipantesPorBancaRepository usuariosParticipantesPorBancaRepository;
 
-    public AgendamentoBancaServiceImpl(AgendamentoRepository agendamentoRepository, UserRepository userRepository, UsuariosParticipantesPorBancaRepository usuariosParticipantesPorBancaRepository) {
+    private final EmailService emailService;
+
+    public AgendamentoBancaServiceImpl(AgendamentoRepository agendamentoRepository, UserRepository userRepository, UsuariosParticipantesPorBancaRepository usuariosParticipantesPorBancaRepository, EmailService emailService) {
         this.agendamentoRepository = agendamentoRepository;
         this.userRepository = userRepository;
         this.usuariosParticipantesPorBancaRepository = usuariosParticipantesPorBancaRepository;
+        this.emailService = emailService;
     }
 
     @Override
@@ -136,24 +141,35 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
     @Override
     public AgendamentoBancaForm update(AgendamentoBancaForm bancaForm) {
 
-        AgendamentoBanca agendamento = agendamentoRepository.findById(bancaForm.getId())
+        AgendamentoBanca banca = agendamentoRepository.findById(bancaForm.getId())
                 .orElseThrow(BancaNaoEncontradaException::new);
+
+        AgendamentoBanca oldBanca = banca.clone();
+        oldBanca.setParticipantes(new ArrayList<>(banca.getParticipantes()));
 
         var dataAgendamentoAtualizada = LocalDateTime
                 .parse(bancaForm.getDataAgendamento(),
                         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 
-        agendamento.setTitulo(bancaForm.getTitulo());
-        agendamento.setDescricao(bancaForm.getDescricao());
-        agendamento.setTipoBanca(bancaForm.getTipoBanca());
-        agendamento.setTema(bancaForm.getTema());
-        agendamento.setDataAgendamento(dataAgendamentoAtualizada);
-        agendamento.setAgendamento(bancaForm.getStatusAgendamento());
+        var alunosIDs = bancaForm.getListaIdParticipantes();
+        var professoresIDs = bancaForm.getListaIdAvaliadores();
+
+        var listaAlunos = getListUsuarioByListID(alunosIDs);
+        var listaProfessores = getListUsuarioByListID(professoresIDs);
+
+        checkyIfCanCreateAgendamentoOnThisTime(bancaForm.getDataAgendamento());
+        AgendamentoBanca bancaAtualizada = AgendamentoBancaUtils.convertFormToAgendamentoBanca(bancaForm, listaAlunos, listaProfessores);
         //Delete all users in Banca
-        deleteAllUsersInBanca(agendamento);
+        deleteAllUsersInBanca(banca);
         //Add a new lis of users in Banca
         var bancaFormAtualizada = addParticipantes(bancaForm);
-        agendamentoRepository.save(agendamento);
+
+        var bancaSalva = agendamentoRepository.save(bancaAtualizada);
+        bancaAtualizada = bancaSalva.clone();
+        boolean imprimiu = emailService.sendDifferencesBetweenNewAndOldBancaUpdate(oldBanca, bancaAtualizada);
+
+
+        System.out.println("imprimiu: " + imprimiu);
         return bancaFormAtualizada;
     }
 
@@ -192,9 +208,18 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
     }
 
     private void addUserOnMembersOfBanca(AgendamentoBanca banca, Usuario usuario, boolean isTeacher) {
+        boolean isStudent = !isTeacher;
         var usuariosParticipantesBanca = new UsuarioParticipantesPorBanca(
-                new UsuariosParticipantesBancaPK(banca.getId(), usuario.getId()),
-                banca, usuario, StatusAgendamento.AGUARDANDO, isTeacher);
+                new UsuariosParticipantesBancaPK(
+                        banca.getId(),
+                        usuario.getId()
+                ),
+                banca,
+                usuario,
+                StatusAgendamento.AGUARDANDO,
+                isTeacher,
+                isStudent);
+
         usuariosParticipantesPorBancaRepository.save(usuariosParticipantesBanca);
     }
 

@@ -30,4 +30,6 @@ public class UsuarioParticipantesPorBanca {
 
    private Boolean isTeacher;
 
+   private Boolean isStudent;
+
 }
