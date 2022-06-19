@@ -4,6 +4,7 @@ import com.gru.ifsp.AgendamentoBanca.model.enums.StatusAgendamento;
 import lombok.*;
 
 import javax.persistence.*;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -28,8 +29,8 @@ public class UsuarioParticipantesPorBanca {
     @Enumerated(EnumType.STRING)
     StatusAgendamento statusAgendamento = StatusAgendamento.AGUARDANDO;
 
-   private Boolean isTeacher;
+    private Boolean isTeacher;
 
-   private Boolean isStudent;
+    private Boolean isStudent;
 
 }
