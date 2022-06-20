@@ -29,9 +29,9 @@ public class UsuarioParticipantesPorBanca {
 
     @Enumerated(EnumType.STRING)
     StatusAgendamento statusAgendamento = StatusAgendamento.AGUARDANDO;
-
+    @Nullable
     private Boolean isTeacher;
-
+  
     private Boolean isStudent;
 
     private Boolean isAdmin;

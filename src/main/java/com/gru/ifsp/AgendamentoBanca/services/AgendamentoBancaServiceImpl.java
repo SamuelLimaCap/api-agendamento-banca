@@ -21,6 +21,7 @@ import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 @Transactional
 @Service
 public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
@@ -47,7 +48,7 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
         var participants = getListUsuarioByListID(form.getListaIdParticipantes());
         var measurers = getListUsuarioByListID(form.getListaIdAvaliadores());
         var measurersWhoWillBeAdmin = List.of(form.getAdminsBanca());
-
+      
         BancaUtils.validateIfOneAdminIsNotAtLeastMeasurer(measurersWhoWillBeAdmin, measurers);
 
         var bancaCreated = createBanca(form, participants, measurers);
@@ -96,7 +97,7 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
                 .filter(
                         professorOnBanca -> adminIdList.contains(professorOnBanca.getId().getUsuarioId())
                 ).collect(Collectors.toList());
-
+      
         if (usersDesignedToBeAdmin.isEmpty())
             throw new RuntimeException("Não tem usuários permitidos para administrarem a banca dentro da lista de admins enviada");
 
@@ -197,6 +198,7 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
             bancaUpdated.setAgendamento(StatusAgendamento.AGUARDANDO);
             agendamentoRepository.save(bancaUpdated);
         }
+  
         bancaWithInformationUpdated = bancaUpdated.clone();
         sendDifferencesBetweenBancas(oldBanca, bancaWithInformationUpdated);
 

@@ -38,8 +38,7 @@ public class AgendamentoBancaForm {
     @Size(min = 1, message = "Toda banca deve conter pelo menos 1 administrador!")
     private Long[] adminsBanca;
 
-
-    public AgendamentoBancaForm(String titulo, String descricao, TipoBanca tipoBanca, String tema, String dataAgendamento, Long[] listaIdParticipantes, Long[] listaIdAvaliadores, StatusAgendamento statusAgendamento) {
+    public AgendamentoBancaForm(String titulo, String descricao, TipoBanca tipoBanca, String tema, String dataAgendamento, Long[] listaIdParticipantes, Long[] listaIdAvaliadores, StatusAgendamento statusAgendamento, Long[] adminBanca) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.tipoBanca = tipoBanca;
@@ -48,6 +47,7 @@ public class AgendamentoBancaForm {
         this.listaIdParticipantes = listaIdParticipantes;
         this.listaIdAvaliadores = listaIdAvaliadores;
         this.statusAgendamento = statusAgendamento;
+        this.adminsBanca = adminBanca;
     }
 }
 

@@ -26,8 +26,10 @@ public class AgendamentoUsuariosForm {
     private List<UsuarioDto> listaAvaliadores = new ArrayList<>();
     private List<UsuarioDto> listaAdmins = new ArrayList<>();
 
+    private List<UsuarioDto> adminsBanca = new ArrayList<>();
 
     public AgendamentoUsuariosForm(AgendamentoBanca banca, List<UsuarioDto> alunos, List<UsuarioDto> professores, List<UsuarioDto> listaAdmins){
+
         this.id = banca.getId();
         this.titulo = banca.getTitulo();
         this.descricao = banca.getDescricao();
