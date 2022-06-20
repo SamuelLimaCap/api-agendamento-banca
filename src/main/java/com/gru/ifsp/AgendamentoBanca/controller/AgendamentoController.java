@@ -39,7 +39,7 @@ public class AgendamentoController {
     @PreAuthorize("hasRole('" + PermissaoEnum.Code.USUARIO + "')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<Object> getById(@PathVariable Long id) {
-        var resultado = agendamentoService.getBancaAndUsuariosByBancaId(id);
+        var resultado = agendamentoService.getBancaAndBancaMembersByBancaId(id);
         return ResponserHandler.generateResponse("Sucesso ao retornar dados!", HttpStatus.OK, resultado);
     }
 
@@ -74,5 +74,19 @@ public class AgendamentoController {
     public ResponseEntity<Object> cancelSubscription(@RequestParam(value = "id") Long bancaId, @RequestParam(value = "user") Long userId) {
         agendamentoService.setSubscriptionStatus(bancaId, userId, StatusAgendamento.CANCELADO);
         return ResponserHandler.generateResponse("Inscrição confirmada com sucesso!", HttpStatus.OK, null);
+    }
+
+    @PreAuthorize("hasRole('"+ PermissaoEnum.Code.ADMIN+"')")
+    @PostMapping("add-admin/{idBanca}/{idUsuario}")
+    public ResponseEntity<Object> addAdmin(@PathVariable("idBanca") Long idBanca, @PathVariable("idUsuario") Long idUsuario){
+        agendamentoService.updateUserForAdmin(idBanca, idUsuario, true);
+        return ResponserHandler.generateResponse("Participante definido como administrador da banca!", HttpStatus.OK,null);
+    }
+
+    @PreAuthorize("hasRole('"+ PermissaoEnum.Code.ADMIN+"')")
+    @PostMapping("delete-admin/{idBanca}/{idUsuario}")
+    public ResponseEntity<Object> deleteAdmin(@PathVariable("idBanca") Long idBanca, @PathVariable("idUsuario") Long idUsuario){
+        agendamentoService.updateUserForAdmin(idBanca, idUsuario, false);
+        return ResponserHandler.generateResponse("Participante excluído como administrador da banca!", HttpStatus.OK,null);
     }
 }

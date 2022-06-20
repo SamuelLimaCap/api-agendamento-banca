@@ -15,7 +15,7 @@ public interface AgendamentoBancaService {
 
     AgendamentoBanca getById(Long id);
 
-    AgendamentoUsuariosForm getBancaAndUsuariosByBancaId(Long id);
+    AgendamentoUsuariosForm getBancaAndBancaMembersByBancaId(Long id);
 
     AgendamentoBancaForm update(AgendamentoBancaForm parametros);
 
@@ -24,4 +24,6 @@ public interface AgendamentoBancaService {
     AgendamentoBancaForm addParticipantes(AgendamentoBancaForm banca);
 
     boolean setSubscriptionStatus(Long bancaId, Long userId, StatusAgendamento newStatus);
+
+    void updateUserForAdmin(Long idBanca, Long idUsuario, boolean permission);
 }

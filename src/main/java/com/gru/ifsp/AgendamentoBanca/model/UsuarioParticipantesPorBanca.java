@@ -2,6 +2,7 @@ package com.gru.ifsp.AgendamentoBanca.model;
 
 import com.gru.ifsp.AgendamentoBanca.model.enums.StatusAgendamento;
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 
@@ -32,5 +33,7 @@ public class UsuarioParticipantesPorBanca {
     private Boolean isTeacher;
 
     private Boolean isStudent;
+
+    private Boolean isAdmin;
 
 }
