@@ -82,7 +82,7 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
         usuariosParticipantesPorBancaRepository.save(usarioOnBanca);
     }
 
-    private LocalDateTime DateStringToLocalDateTime(String date){
+    private LocalDateTime StringDataToLocalDateTime(String date){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         return LocalDateTime.parse(date, formatter);
     }
