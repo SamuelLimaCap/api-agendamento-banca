@@ -2,6 +2,7 @@ package com.gru.ifsp.AgendamentoBanca.model;
 
 import com.gru.ifsp.AgendamentoBanca.model.enums.StatusAgendamento;
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 @AllArgsConstructor
@@ -27,7 +28,10 @@ public class UsuarioParticipantesPorBanca {
 
     @Enumerated(EnumType.STRING)
     StatusAgendamento statusAgendamento = StatusAgendamento.AGUARDANDO;
+    @Nullable
+    private Boolean isTeacher;
 
-   private Boolean isTeacher;
+    @Nullable
+    private Boolean isAdmin;
 
 }

@@ -62,4 +62,18 @@ public class AgendamentoController {
         agendamentoService.addParticipantes(banca);
         return ResponserHandler.generateResponse("Participantes incluídos com sucesso!", HttpStatus.OK, banca);
     }
+
+    @PreAuthorize("hasRole('"+ PermissaoEnum.Code.ADMIN+"')")
+    @PostMapping("add-admin/{idBanca}/{idUsuario}")
+    public ResponseEntity<Object> addAdmin(@PathVariable("idBanca") Long idBanca, @PathVariable("idUsuario") Long idUsuario){
+        agendamentoService.updateUserForAdmin(idBanca, idUsuario, true);
+        return ResponserHandler.generateResponse("Participante definido como administrador da banca!", HttpStatus.OK,null);
+    }
+
+    @PreAuthorize("hasRole('"+ PermissaoEnum.Code.ADMIN+"')")
+    @PostMapping("delete-admin/{idBanca}/{idUsuario}")
+    public ResponseEntity<Object> deleteAdmin(@PathVariable("idBanca") Long idBanca, @PathVariable("idUsuario") Long idUsuario){
+        agendamentoService.updateUserForAdmin(idBanca, idUsuario, false);
+        return ResponserHandler.generateResponse("Participante excluído como administrador da banca!", HttpStatus.OK,null);
+    }
 }

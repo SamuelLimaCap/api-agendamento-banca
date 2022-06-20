@@ -25,8 +25,10 @@ public class AgendamentoUsuariosForm {
     private List<UsuarioDto> listaParticipantes = new ArrayList<>();
     private List<UsuarioDto> listaAvaliadores = new ArrayList<>();
 
+    private List<UsuarioDto> adminsBanca = new ArrayList<>();
 
-    public AgendamentoUsuariosForm(AgendamentoBanca banca, List<UsuarioDto> alunos, List<UsuarioDto> professores){
+
+    public AgendamentoUsuariosForm(AgendamentoBanca banca, List<UsuarioDto> alunos, List<UsuarioDto> professores, List<UsuarioDto> adminsBanca){
         this.id = banca.getId();
         this.titulo = banca.getTitulo();
         this.descricao = banca.getDescricao();
@@ -36,6 +38,7 @@ public class AgendamentoUsuariosForm {
         this.statusAgendamento = String.valueOf(banca.getAgendamento());
         this.listaParticipantes.addAll(alunos);
         this.listaAvaliadores.addAll(professores);
+        this.adminsBanca.addAll(adminsBanca);
     }
 
 
