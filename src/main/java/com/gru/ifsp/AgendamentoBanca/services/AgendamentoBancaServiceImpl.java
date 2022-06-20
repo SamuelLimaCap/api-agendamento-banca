@@ -1,6 +1,5 @@
 package com.gru.ifsp.AgendamentoBanca.services;
 
-import com.gru.ifsp.AgendamentoBanca.dtos.UsuarioDto;
 import com.gru.ifsp.AgendamentoBanca.form.AgendamentoBancaForm;
 import com.gru.ifsp.AgendamentoBanca.form.AgendamentoUsuariosForm;
 import com.gru.ifsp.AgendamentoBanca.model.AgendamentoBanca;
@@ -14,13 +13,14 @@ import com.gru.ifsp.AgendamentoBanca.model.exceptions.UsuarioNaoEncontradoNaBanc
 import com.gru.ifsp.AgendamentoBanca.repositories.AgendamentoRepository;
 import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
 import com.gru.ifsp.AgendamentoBanca.repositories.UsuariosParticipantesPorBancaRepository;
-import com.gru.ifsp.AgendamentoBanca.util.AgendamentoBancaUtils;
+import com.gru.ifsp.AgendamentoBanca.services.contracts.EmailService;
+import com.gru.ifsp.AgendamentoBanca.util.*;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
+
 
 @Transactional
 @Service
@@ -28,91 +28,109 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
 
     private final AgendamentoRepository agendamentoRepository;
 
-    private final  UserRepository userRepository;
+    private final UserRepository userRepository;
     private final UsuariosParticipantesPorBancaRepository usuariosParticipantesPorBancaRepository;
 
-    public AgendamentoBancaServiceImpl(AgendamentoRepository agendamentoRepository, UserRepository userRepository, UsuariosParticipantesPorBancaRepository usuariosParticipantesPorBancaRepository) {
+    private final EmailService emailService;
+
+    public AgendamentoBancaServiceImpl(AgendamentoRepository agendamentoRepository, UserRepository userRepository, UsuariosParticipantesPorBancaRepository usuariosParticipantesPorBancaRepository, EmailService emailService) {
         this.agendamentoRepository = agendamentoRepository;
         this.userRepository = userRepository;
         this.usuariosParticipantesPorBancaRepository = usuariosParticipantesPorBancaRepository;
+        this.emailService = emailService;
     }
 
     @Override
-    public AgendamentoBanca add(AgendamentoBancaForm form){
-        checkyIfCanCreateAgendamentoOnThisTime(form.getDataAgendamento());
+    public AgendamentoBanca add(AgendamentoBancaForm form) {
 
-        var alunosIDs = form.getListaIdParticipantes();
-        var professoresIDs = form.getListaIdAvaliadores();
+        BancaUtils.validateIfHasBancaCloseToThisTime(form.getDataAgendamento(), form.getId(), agendamentoRepository);
 
-        var listaAlunos = getListUsuarioByListID(alunosIDs);
-        var listaProfessores = getListUsuarioByListID(professoresIDs);
+        var participants = getListUsuarioByListID(form.getListaIdParticipantes());
+        var measurers = getListUsuarioByListID(form.getListaIdAvaliadores());
+        var measurersWhoWillBeAdmin = List.of(form.getAdminsBanca());
+      
+        BancaUtils.validateIfOneAdminIsNotAtLeastMeasurer(measurersWhoWillBeAdmin, measurers);
 
-       AgendamentoBanca agendamentoBanca = AgendamentoBancaUtils.convertFormToAgendamentoBanca(form, listaAlunos, listaProfessores);
+        var bancaCreated = createBanca(form, participants, measurers);
+        addMembersOnBanca(bancaCreated, participants, false);
+        addMembersOnBanca(bancaCreated, measurers, true);
+        addAdminBancaRoleToMembers(bancaCreated, measurersWhoWillBeAdmin);
 
-        agendamentoRepository.save(agendamentoBanca);
-        //Add users on banca through the entity responsible for assert relationship beetween banca and users
-        addUsuariosOnBanca(agendamentoBanca, listaAlunos, false);
-        addUsuariosOnBanca(agendamentoBanca,listaProfessores, true);
-        //Set who is admin of banca
-        setAdminsOfBanca(agendamentoBanca,form.getAdminsBanca());
-        return agendamentoBanca;
+        sendEmailToParticipantsAndMeasurers(bancaCreated, participants, measurers);
+
+        return bancaCreated;
     }
 
-    private void setAdminsOfBanca(AgendamentoBanca banca, Long[] adminsBanca) {
-        List<UsuarioParticipantesPorBanca> listaProfessores = usuariosParticipantesPorBancaRepository.findAllByBancaIsAndIsTeacher(banca, true);
-        if(listaProfessores.size() > 0){
-            listaProfessores.forEach(professor -> Arrays.stream(adminsBanca).forEach(id -> {
-                if (Objects.equals(id, professor.getUsuario().getId())) {
-                    professor.setIsAdmin(true);
-                }
-            }));
-            usuariosParticipantesPorBancaRepository.saveAll(listaProfessores);
-        } else{
-            throw new RuntimeException("Não há usuários permitidos para admistrar bancas");
+    private AgendamentoBanca createBanca(AgendamentoBancaForm form, List<Usuario> participants, List<Usuario> measurers) {
+        AgendamentoBanca agendamentoBanca = AgendamentoBancaUtils.convertFormToAgendamentoBanca(form, participants, measurers);
+        return agendamentoRepository.save(agendamentoBanca);
+    }
+
+    private void addMembersOnBanca(AgendamentoBanca banca, List<Usuario> usuarios, boolean isTeacher) {
+        for (Usuario usuario : usuarios) {
+            addUserOnMembersOfBanca(banca, usuario, isTeacher);
         }
     }
 
-    public void updateUserForAdmin(Long idBanca, Long idUsuario, boolean permission){
-        var banca = getById(idBanca);
-        var usuario = userRepository.findById(idUsuario).orElseThrow(UsuarioNaoEncontradoNaBanca::new);
-        var usarioOnBanca = usuariosParticipantesPorBancaRepository
-                .findByBancaAndUsuario(banca, usuario).get();
+    private void addUserOnMembersOfBanca(AgendamentoBanca banca, Usuario usuario, boolean isTeacher) {
+        boolean isStudent = !isTeacher;
+        var usuariosParticipantesBanca = new UsuarioParticipantesPorBanca(
+                new UsuariosParticipantesBancaPK(
+                        banca.getId(),
+                        usuario.getId()
+                ),
+                banca,
+                usuario,
+                StatusAgendamento.AGUARDANDO,
+                isTeacher,
+                isStudent,
+                false);
 
-        usarioOnBanca.setIsAdmin(permission);
-        usuariosParticipantesPorBancaRepository.save(usarioOnBanca);
+        usuariosParticipantesPorBancaRepository.save(usuariosParticipantesBanca);
     }
 
-    private LocalDateTime StringDataToLocalDateTime(String date){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        return LocalDateTime.parse(date, formatter);
+
+    private void addAdminBancaRoleToMembers(AgendamentoBanca banca, List<Long> adminIdList) {
+        var professors = usuariosParticipantesPorBancaRepository.findAllByBancaIsAndIsTeacher(banca, true);
+
+        var usersDesignedToBeAdmin = professors.stream()
+                .filter(
+                        professorOnBanca -> adminIdList.contains(professorOnBanca.getId().getUsuarioId())
+                ).collect(Collectors.toList());
+      
+        if (usersDesignedToBeAdmin.isEmpty())
+            throw new RuntimeException("Não tem usuários permitidos para administrarem a banca dentro da lista de admins enviada");
+
+        usersDesignedToBeAdmin.forEach(professor -> professor.setIsAdmin(true));
+        usuariosParticipantesPorBancaRepository.saveAll(usersDesignedToBeAdmin);
     }
 
-    private void checkyIfCanCreateAgendamentoOnThisTime(String dataAgendamento) throws RuntimeException {
-        var data = DateStringToLocalDateTime(dataAgendamento);
 
-        var horarios = agendamentoRepository
-                .findByDataAgendamentoBetween(data.minusMinutes(50),
-                        data.plusMinutes(50));
+    private void sendEmailToParticipantsAndMeasurers(AgendamentoBanca banca, List<Usuario> participants, List<Usuario> measurers) {
+        if (Constants.actualState.equalsIgnoreCase(Constants.productionState)) {
+            sendEmailToEveryUserToConfirmBanca(participants, banca.getId());
+            sendEmailToEveryUserToConfirmBanca(participants, banca.getId());
+        }
+    }
 
-        if(horarios.size() > 0){
-           for(var horario : horarios){
-               if(!(data == horario.getDataAgendamento()) && horarios.size() > 1){
-                   throw new RuntimeException("Banca não pode ser cadastrada neste horário");
-               }
-           }
+    private void sendEmailToEveryUserToConfirmBanca(List<Usuario> userList, Long bancaId) {
+        if (Constants.actualState.equalsIgnoreCase(Constants.productionState)) {
+            userList.forEach(user ->
+                    emailService.sendEmailToConfirmChangesOnBanca(user.getEmail(), bancaId, user.getId())
+            );
         }
     }
 
     @Override
     public List<AgendamentoUsuariosForm> getAll() {
         var allBancas = agendamentoRepository.findAll();
-        return listOfBancas(allBancas);
+        return bancaListFormatted(allBancas);
     }
 
-    private List<AgendamentoUsuariosForm> listOfBancas(List<AgendamentoBanca> allBancas){
+    private List<AgendamentoUsuariosForm> bancaListFormatted(List<AgendamentoBanca> allBancas) {
         List<AgendamentoUsuariosForm> listOfAllBancas = new ArrayList<>();
-        for(var banca : allBancas){
-            var objeto = getBancaAndUsuariosByBancaId(banca.getId());
+        for (var banca : allBancas) {
+            var objeto = getBancaAndBancaMembersByBancaId(banca.getId());
             listOfAllBancas.add(objeto);
         }
         return listOfAllBancas;
@@ -124,78 +142,125 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
     }
 
     @Override
-    public AgendamentoUsuariosForm getBancaAndUsuariosByBancaId(Long id){
+    public void updateUserForAdmin(Long idBanca, Long idUsuario, boolean permission) {
+        var banca = getById(idBanca);
+        var usuario = userRepository.findById(idUsuario).orElseThrow(UsuarioNaoEncontradoNaBanca::new);
+        var usarioOnBanca = usuariosParticipantesPorBancaRepository
+                .findByBancaAndUsuario(banca, usuario).get();
+
+        usarioOnBanca.setIsAdmin(permission);
+        usuariosParticipantesPorBancaRepository.save(usarioOnBanca);
+    }
+
+    @Override
+    public AgendamentoUsuariosForm getBancaAndBancaMembersByBancaId(Long id) {
         var banca = getById(id);
-        var usuariosParticipantes = usuariosParticipantesPorBancaRepository
-                .returAllMembersOnBanca(id);
 
+        var bancaMembers = usuariosParticipantesPorBancaRepository.getByIdAgendamentoBancaId(id);
+        var membersSegmentedByBancaRoles = UsuarioParticipantesPorBancaUtils.splitIntoBancaRoles(bancaMembers, banca.getId());
 
-        var listaParticipantes = splitIntoMapOfProfessorsAndStudents
-                (usuariosParticipantes, banca.getId());
+        var bancaListMembersForm = new AgendamentoUsuariosForm(
+                banca,
+                membersSegmentedByBancaRoles.get("alunos"),
+                membersSegmentedByBancaRoles.get("professores"),
+                membersSegmentedByBancaRoles.get("administradores"));
 
-        return new AgendamentoUsuariosForm(banca,
-                listaParticipantes.get("alunos"), listaParticipantes.get("professores"), listaParticipantes.get("administradores"));
-    }
-
-    public Map<String, List<UsuarioDto>> splitIntoMapOfProfessorsAndStudents(Long[] alunosProfessores, Long idBanca){
-        List<UsuarioDto> alunos = new ArrayList<>();
-        List<UsuarioDto> professores = new ArrayList<>();
-        var administradores = returnAllAdminsOfABanca(idBanca);
-
-        for(var usuarioId : alunosProfessores){
-            var user = getUsuarioByID(usuarioId);
-            if(usuariosParticipantesPorBancaRepository
-                    .verifyUserIsTeacher(user.getId(), idBanca)){
-                professores.add(new UsuarioDto(user));
-
-            } else
-                alunos.add(new UsuarioDto(user));
-        }
-
-        Map<String, List<UsuarioDto>> alunosProfesoresSeparados = new HashMap<>();
-        alunosProfesoresSeparados.put("alunos",alunos);
-        alunosProfesoresSeparados.put("professores",professores);
-        alunosProfesoresSeparados.put("administradores", administradores);
-
-        return alunosProfesoresSeparados;
-    }
-
-    public List<UsuarioDto> returnAllAdminsOfABanca(Long idBanca){
-        List<UsuarioDto> administradores = new ArrayList<>();
-        var usersAdmins = usuariosParticipantesPorBancaRepository.findAllByIsAdmin(idBanca);
-        for(var id : usersAdmins){
-            var user = getUsuarioByID(id);
-            administradores.add(new UsuarioDto(user));
-        }
-        return administradores;
+        return bancaListMembersForm;
     }
 
 
     @Override
     public AgendamentoBancaForm update(AgendamentoBancaForm bancaForm) {
 
-        AgendamentoBanca agendamento = agendamentoRepository.findById(bancaForm.getId())
+        AgendamentoBanca banca = agendamentoRepository.findById(bancaForm.getId())
                 .orElseThrow(BancaNaoEncontradaException::new);
 
-        var dataAgendamentoAtualizada = DateStringToLocalDateTime(bancaForm.getDataAgendamento());
+        AgendamentoBanca oldBanca = banca.clone();
+        setOldMembersOnOldBanca(oldBanca, banca);
 
-        //validate date agendamento
-        checkyIfCanCreateAgendamentoOnThisTime(bancaForm.getDataAgendamento());
+        var newListParticipants = getListUsuarioByListID(bancaForm.getListaIdParticipantes());
+        var newListMeasurers = getListUsuarioByListID(bancaForm.getListaIdAvaliadores());
 
-        agendamento.setTitulo(bancaForm.getTitulo());
-        agendamento.setDescricao(bancaForm.getDescricao());
-        agendamento.setTipoBanca(bancaForm.getTipoBanca());
-        agendamento.setTema(bancaForm.getTema());
-        agendamento.setDataAgendamento(dataAgendamentoAtualizada);
-        agendamento.setAgendamento(bancaForm.getStatusAgendamento());
-        //Delete all users in Banca
-        deleteAllUsersInBanca(agendamento);
-        //Add a new list of users in Banca
-        var bancaFormAtualizada = addParticipantes(bancaForm);
-        //update admins of a banca
-        setAdminsOfBanca(agendamento, bancaForm.getAdminsBanca());
-        agendamentoRepository.save(agendamento);
-        return bancaFormAtualizada;
+        BancaUtils.validateIfHasBancaCloseToThisTime(bancaForm.getDataAgendamento(), bancaForm.getId(), agendamentoRepository);
+
+        BancaUtils.validateIfOneAdminIsNotAtLeastMeasurer(List.of(bancaForm.getAdminsBanca()), newListMeasurers);
+
+        updateMembersOnBanca(banca, newListParticipants, newListMeasurers);
+
+        var bancaWithInformationUpdated = AgendamentoBancaUtils.convertFormToAgendamentoBanca(bancaForm, newListParticipants, newListMeasurers);
+        var bancaUpdated = agendamentoRepository.save(bancaWithInformationUpdated);
+
+
+        var bancaMembersListWithWaitingStatus = usuariosParticipantesPorBancaRepository.
+                findAllByIdAgendamentoBancaIdAndStatusAgendamentoEquals(banca.getId(), StatusAgendamento.AGUARDANDO);
+
+        if (bancaMembersListWithWaitingStatus.isPresent()) {
+            bancaUpdated.setAgendamento(StatusAgendamento.AGUARDANDO);
+            agendamentoRepository.save(bancaUpdated);
+        }
+  
+        bancaWithInformationUpdated = bancaUpdated.clone();
+        sendDifferencesBetweenBancas(oldBanca, bancaWithInformationUpdated);
+
+        bancaMembersListWithWaitingStatus.ifPresent(usuarioParticipantesPorBancas ->
+                sendEmailToEveryUserToConfirmBanca(
+                        usuarioParticipantesPorBancas.stream().map(UsuarioParticipantesPorBanca::getUsuario).collect(Collectors.toList()),
+                        banca.getId()
+                )
+        );
+        return bancaForm;
+    }
+
+    private void setOldMembersOnOldBanca(AgendamentoBanca oldBanca, AgendamentoBanca banca) {
+        oldBanca.setParticipantes(new ArrayList<>(banca.getParticipantes()));
+        oldBanca.setAvaliadores(new ArrayList<>(banca.getAvaliadores()));
+    }
+
+    private void updateMembersOnBanca(AgendamentoBanca banca, List<Usuario> newListParticipants, List<Usuario> newListMeasurers) {
+        var bancaActualMembers = usuariosParticipantesPorBancaRepository.getByIdAgendamentoBancaId(banca.getId());
+
+        deleteNecessaryMembersOnBanca(bancaActualMembers, newListParticipants, newListMeasurers);
+        addNewMembersOnBanca(banca, bancaActualMembers, newListParticipants, newListMeasurers);
+
+    }
+
+    private void deleteNecessaryMembersOnBanca(List<UsuarioParticipantesPorBanca> bancaActualMembers, List<Usuario> newListParticipants, List<Usuario> newListMeasurers) {
+        var membersToBeDeletedOnBanca = bancaActualMembers.stream().filter(member ->
+                !newListParticipants.contains(member.getUsuario())
+                        &&
+                        !newListMeasurers.contains(member.getUsuario())
+        );
+        membersToBeDeletedOnBanca.forEach(
+                usuariosParticipantesPorBancaRepository::delete
+        );
+    }
+
+    private void addNewMembersOnBanca(AgendamentoBanca banca,
+                                      List<UsuarioParticipantesPorBanca> bancaActualMembers,
+                                      List<Usuario> newListParticipants,
+                                      List<Usuario> newListMeasurers) {
+        var bancaActualMembersUserClass = bancaActualMembers.stream().map(x -> x.getUsuario()).collect(Collectors.toList());
+
+        var participantsToAdd = newListParticipants.stream()
+                .filter(participant ->
+                        !bancaActualMembersUserClass.contains(participant)
+                ).collect(Collectors.toList());
+
+        var measurersToAdd = newListMeasurers.stream().
+                filter(measurer ->
+                        !bancaActualMembersUserClass.contains(measurer))
+                .collect(Collectors.toList());
+
+
+        addMembersOnBanca(banca, participantsToAdd, false);
+        addMembersOnBanca(banca, measurersToAdd, true);
+    }
+
+
+
+
+    private void sendDifferencesBetweenBancas(AgendamentoBanca oldBanca, AgendamentoBanca bancaWithInformationUpdated) {
+        emailService.sendDifferencesBetweenNewAndOldBancaUpdate(oldBanca, bancaWithInformationUpdated);
     }
 
     @Override
@@ -207,34 +272,66 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
     }
 
     @Override
-    public AgendamentoBancaForm addParticipantes(AgendamentoBancaForm bancaForm){
+    public boolean setSubscriptionStatus(Long bancaId, Long userId, StatusAgendamento newStatus) {
+        var result =
+                usuariosParticipantesPorBancaRepository.findById(new UsuariosParticipantesBancaPK(bancaId, userId));
 
-        var alunosIDs = bancaForm.getListaIdParticipantes();
-        var professoresIDs = bancaForm.getListaIdAvaliadores();
+        if (result.isEmpty())
+            throw new RuntimeException("Nao tem esse usuario nessa banca ou essa banca nao está cadastrada");
 
-        var listaAlunos = getListUsuarioByListID(alunosIDs);
-        var listaProfessores = getListUsuarioByListID(professoresIDs);
+        var userOnBanca = result.get();
+        setUserSubscriptionStatus(userOnBanca, newStatus);
 
-        AgendamentoBanca agendamentoBanca = AgendamentoBancaUtils.convertFormToAgendamentoBanca(bancaForm, listaAlunos, listaProfessores);
+        var usersStillToConfirm = getUsersThatStillWaitingConfirmation(bancaId);
+        var usersCancelled = getUsersThatCancelled(bancaId);
+        var hasSomeProblemToConfirmBanca = usersStillToConfirm.isPresent() | usersCancelled.isPresent();
 
-        //Add users on banca through the entity responsible for assert relationship beetween banca and users
-        addUsuariosOnBanca(agendamentoBanca, listaAlunos, false);
-        addUsuariosOnBanca(agendamentoBanca,listaProfessores, true);
-
-        return bancaForm;
-    }
-
-    private void addUsuariosOnBanca(AgendamentoBanca banca, List<Usuario> usuarios, boolean isTeacher) {
-        for(Usuario usuario : usuarios){
-            addUserOnMembersOfBanca(banca, usuario, isTeacher);
+        if (hasSomeProblemToConfirmBanca) {
+            //TODO send email for everyone showing that one person confirmed subscription and are missing theses members
+        } else {
+            var banca = agendamentoRepository.getById(bancaId);
+            setBancaToConfirmedStatus(banca);
+            sendToUsersOfBancaThatStatusIsConfirmed(banca);
         }
+
+        return false;
     }
 
-    private void addUserOnMembersOfBanca(AgendamentoBanca banca, Usuario usuario, boolean isTeacher) {
-        var usuariosParticipantesBanca = new UsuarioParticipantesPorBanca(
-                new UsuariosParticipantesBancaPK(banca.getId(), usuario.getId()),
-                banca, usuario, StatusAgendamento.AGUARDANDO, isTeacher, null);
-        usuariosParticipantesPorBancaRepository.save(usuariosParticipantesBanca);
+    private void setUserSubscriptionStatus(UsuarioParticipantesPorBanca userOnBanca, StatusAgendamento statusAgendamento) {
+        userOnBanca.setStatusAgendamento(statusAgendamento);
+        usuariosParticipantesPorBancaRepository.save(userOnBanca);
+    }
+
+    private Optional<List<UsuarioParticipantesPorBanca>> getUsersThatStillWaitingConfirmation(Long bancaId) {
+        return usuariosParticipantesPorBancaRepository
+                .findAllByIdAgendamentoBancaIdAndStatusAgendamentoEquals(bancaId, StatusAgendamento.AGUARDANDO);
+    }
+
+    private Optional<List<UsuarioParticipantesPorBanca>> getUsersThatCancelled(Long bancaId) {
+        return usuariosParticipantesPorBancaRepository
+                .findAllByIdAgendamentoBancaIdAndStatusAgendamentoEquals(bancaId, StatusAgendamento.CANCELADO);
+    }
+
+    private void setBancaToConfirmedStatus(AgendamentoBanca banca) {
+        banca.setAgendamento(StatusAgendamento.AGENDADO);
+        agendamentoRepository.save(banca);
+    }
+
+    private void sendToUsersOfBancaThatStatusIsConfirmed(AgendamentoBanca banca) {
+        var usersOnBanca = new ArrayList<Usuario>();
+        usersOnBanca.addAll(banca.getParticipantes());
+        usersOnBanca.addAll(banca.getAvaliadores());
+
+        if (Constants.actualState.equalsIgnoreCase(Constants.productionState)) {
+            usersOnBanca.forEach(user -> {
+                emailService.sendCustomMessageEmail(
+                        "Atualização Banca" + banca.getTitulo(),
+                        "Todos os participantes aceitaram a inscrição para a banca",
+                        "Caso não ocorra nenhuma alteração, tudo ocorrerá conforme descrito nessa banca",
+                        user.getEmail()
+                );
+            });
+        }
     }
 
     private List<Usuario> getListUsuarioByListID(Long[] listUsuarioID) {
@@ -253,8 +350,26 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
     }
 
 
-    private void deleteAllUsersInBanca(AgendamentoBanca banca){
+    private void deleteAllUsersInBanca(AgendamentoBanca banca) {
         usuariosParticipantesPorBancaRepository.deleteAllByBancaIs(banca);
+    }
+
+    @Override
+    public AgendamentoBancaForm addParticipantes(AgendamentoBancaForm bancaForm) {
+
+        var alunosIDs = bancaForm.getListaIdParticipantes();
+        var professoresIDs = bancaForm.getListaIdAvaliadores();
+
+        var listaAlunos = getListUsuarioByListID(alunosIDs);
+        var listaProfessores = getListUsuarioByListID(professoresIDs);
+
+        AgendamentoBanca agendamentoBanca = AgendamentoBancaUtils.convertFormToAgendamentoBanca(bancaForm, listaAlunos, listaProfessores);
+
+        //Add users on banca through the entity responsible for assert relationship beetween banca and users
+        addMembersOnBanca(agendamentoBanca, listaAlunos, false);
+        addMembersOnBanca(agendamentoBanca, listaProfessores, true);
+
+        return bancaForm;
     }
 
 }

@@ -4,6 +4,7 @@ import com.gru.ifsp.AgendamentoBanca.model.AgendamentoBanca;
 import com.gru.ifsp.AgendamentoBanca.model.Usuario;
 import com.gru.ifsp.AgendamentoBanca.model.UsuarioParticipantesPorBanca;
 import com.gru.ifsp.AgendamentoBanca.model.UsuariosParticipantesBancaPK;
+import com.gru.ifsp.AgendamentoBanca.model.enums.StatusAgendamento;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -26,8 +27,15 @@ public interface UsuariosParticipantesPorBancaRepository extends JpaRepository<U
     @Query(value = "SELECT USUARIO_ID FROM USUARIO_PARTICIPANTES_POR_BANCA WHERE BANCA_ID = ?1", nativeQuery = true)
     Long[] returAllMembersOnBanca(Long idBanca);
 
+    List<UsuarioParticipantesPorBanca> getByIdAgendamentoBancaId(Long idBanca);
+
+    @Query(value = "SELECT USUARIO_ID FROM USUARIO_PARTICIPANTES_POR_BANCA WHERE BANCA_ID = ?1 AND IS_ADMIN = true", nativeQuery = true)
+    Long[] findAllByIsAdmin(Long idBanca);
+
+    Optional<List<UsuarioParticipantesPorBanca>> findAllByIdAgendamentoBancaIdAndStatusAgendamentoEquals(Long banca_id, StatusAgendamento statusAgendamento);
+
     List<UsuarioParticipantesPorBanca> findAllByBancaIsAndIsTeacher(AgendamentoBanca banca, boolean isTeacher);
 
     Optional<UsuarioParticipantesPorBanca> findByBancaAndUsuario(AgendamentoBanca banca, Usuario usuario);
-}
 
+    }

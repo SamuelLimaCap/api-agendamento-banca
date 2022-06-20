@@ -11,6 +11,7 @@ import com.gru.ifsp.AgendamentoBanca.repositories.PermissaoRepository;
 import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
 import com.gru.ifsp.AgendamentoBanca.response.DadosParaAtivacaoResponse;
 import com.gru.ifsp.AgendamentoBanca.response.UsuarioResponse;
+import com.gru.ifsp.AgendamentoBanca.util.Constants;
 import com.gru.ifsp.AgendamentoBanca.util.EmailSenderUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -80,8 +81,10 @@ public class UsuarioService {
 
 
     private void sendConfirmationCode(String email, String codeLabel) {
-        String confirmationLabel = "Código de confirmação:";
-        EmailSenderUtil.sendEmail(javaMailSender, email, confirmationLabel + codeLabel);
+        if (Constants.actualState.equalsIgnoreCase(Constants.productionState)) {
+            String confirmationLabel = "Código de confirmação:";
+            EmailSenderUtil.sendEmail(javaMailSender, email, confirmationLabel + codeLabel);
+        }
     }
 
 

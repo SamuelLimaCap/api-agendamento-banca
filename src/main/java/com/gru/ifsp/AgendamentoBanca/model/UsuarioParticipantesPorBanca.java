@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -30,8 +31,9 @@ public class UsuarioParticipantesPorBanca {
     StatusAgendamento statusAgendamento = StatusAgendamento.AGUARDANDO;
     @Nullable
     private Boolean isTeacher;
+  
+    private Boolean isStudent;
 
-    @Nullable
     private Boolean isAdmin;
 
 }

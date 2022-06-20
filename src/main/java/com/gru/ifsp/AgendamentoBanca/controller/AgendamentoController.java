@@ -3,6 +3,7 @@ package com.gru.ifsp.AgendamentoBanca.controller;
 import com.gru.ifsp.AgendamentoBanca.form.AgendamentoBancaForm;
 import com.gru.ifsp.AgendamentoBanca.model.AgendamentoBanca;
 import com.gru.ifsp.AgendamentoBanca.model.enums.PermissaoEnum;
+import com.gru.ifsp.AgendamentoBanca.model.enums.StatusAgendamento;
 import com.gru.ifsp.AgendamentoBanca.response.ResponserHandler;
 import com.gru.ifsp.AgendamentoBanca.services.AgendamentoBancaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,46 +22,58 @@ public class AgendamentoController {
     private AgendamentoBancaService agendamentoService;
 
 
-    @PreAuthorize("hasRole('"+ PermissaoEnum.Code.ADMIN+"')")
+    @PreAuthorize("hasRole('" + PermissaoEnum.Code.ADMIN + "')")
     @PostMapping
     public ResponseEntity<Object> add(@Valid @RequestBody AgendamentoBancaForm agendamentoBancaForm) throws Exception {
-            AgendamentoBanca resultado = agendamentoService.add(agendamentoBancaForm);
-            return ResponserHandler.generateResponse("Succeso ao adicionar a banca!", HttpStatus.CREATED, agendamentoBancaForm);
+        AgendamentoBanca resultado = agendamentoService.add(agendamentoBancaForm);
+        return ResponserHandler.generateResponse("Succeso ao adicionar a banca!", HttpStatus.CREATED, agendamentoBancaForm);
     }
 
-    @PreAuthorize("hasRole('"+ PermissaoEnum.Code.USUARIO+"')")
+    @PreAuthorize("hasRole('" + PermissaoEnum.Code.USUARIO + "')")
     @GetMapping
-    public ResponseEntity<Object> getAll(){
-        var resultado =  agendamentoService.getAll();
+    public ResponseEntity<Object> getAll() {
+        var resultado = agendamentoService.getAll();
         return ResponserHandler.generateResponse("Sucesso ao retornar dados!", HttpStatus.OK, resultado);
     }
 
-    @PreAuthorize("hasRole('"+ PermissaoEnum.Code.USUARIO+"')")
+    @PreAuthorize("hasRole('" + PermissaoEnum.Code.USUARIO + "')")
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Object> getById(@PathVariable Long id){
-        var resultado = agendamentoService.getBancaAndUsuariosByBancaId(id);
+    public ResponseEntity<Object> getById(@PathVariable Long id) {
+        var resultado = agendamentoService.getBancaAndBancaMembersByBancaId(id);
         return ResponserHandler.generateResponse("Sucesso ao retornar dados!", HttpStatus.OK, resultado);
     }
 
-    @PreAuthorize("hasRole('"+ PermissaoEnum.Code.USUARIO+"')")
+    @PreAuthorize("hasRole('" + PermissaoEnum.Code.USUARIO + "')")
     @PutMapping
-    public ResponseEntity<Object> update(@RequestBody AgendamentoBancaForm bancaForm){
-       var resultado = agendamentoService.update(bancaForm);
-       return ResponserHandler.generateResponse("Atualizado!", HttpStatus.OK, resultado);
+    public ResponseEntity<Object> update(@RequestBody AgendamentoBancaForm bancaForm) {
+        var resultado = agendamentoService.update(bancaForm);
+        return ResponserHandler.generateResponse("Atualizado!", HttpStatus.OK, resultado);
     }
 
-    @PreAuthorize("hasRole('"+ PermissaoEnum.Code.ADMIN+"')")
+    @PreAuthorize("hasRole('" + PermissaoEnum.Code.ADMIN + "')")
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Object> delete(@PathVariable Long id){
+    public ResponseEntity<Object> delete(@PathVariable Long id) {
         String resultado = agendamentoService.delete(id);
         return ResponserHandler.generateResponse("Excluído!", HttpStatus.OK, resultado);
     }
 
-    @PreAuthorize("hasRole('"+ PermissaoEnum.Code.ADMIN+"')")
+    @PreAuthorize("hasRole('" + PermissaoEnum.Code.ADMIN + "')")
     @PostMapping(value = "/add-participantes")
-    public ResponseEntity<Object> addParticipante(@RequestBody AgendamentoBancaForm banca){
+    public ResponseEntity<Object> addParticipante(@RequestBody AgendamentoBancaForm banca) {
         agendamentoService.addParticipantes(banca);
         return ResponserHandler.generateResponse("Participantes incluídos com sucesso!", HttpStatus.OK, banca);
+    }
+
+    @PostMapping("/confirmar")
+    public ResponseEntity<Object> confirmSubscription(@RequestParam(value = "id") Long bancaId, @RequestParam(value = "user") Long userId) {
+        agendamentoService.setSubscriptionStatus(bancaId, userId, StatusAgendamento.AGENDADO);
+        return ResponserHandler.generateResponse("Inscrição confirmada com sucesso!", HttpStatus.OK, null);
+    }
+
+    @PostMapping("/cancelar")
+    public ResponseEntity<Object> cancelSubscription(@RequestParam(value = "id") Long bancaId, @RequestParam(value = "user") Long userId) {
+        agendamentoService.setSubscriptionStatus(bancaId, userId, StatusAgendamento.CANCELADO);
+        return ResponserHandler.generateResponse("Inscrição confirmada com sucesso!", HttpStatus.OK, null);
     }
 
     @PreAuthorize("hasRole('"+ PermissaoEnum.Code.ADMIN+"')")
