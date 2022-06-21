@@ -1,6 +1,7 @@
 package com.gru.ifsp.AgendamentoBanca.util;
 
 import com.gru.ifsp.AgendamentoBanca.dtos.UsuarioDto;
+import com.gru.ifsp.AgendamentoBanca.form.BancaMemberDto;
 import com.gru.ifsp.AgendamentoBanca.model.UsuarioParticipantesPorBanca;
 
 import java.util.ArrayList;
@@ -34,5 +35,44 @@ public class UsuarioParticipantesPorBancaUtils {
         membersSegmentedByRole.put("administradores", administradores);
 
         return membersSegmentedByRole;
+    }
+
+    public static Map<String, List<BancaMemberDto>> splitMembersBasedOnBancaRoles(List<UsuarioParticipantesPorBanca> members) {
+        var participants = new ArrayList<BancaMemberDto>();
+        var measurers = new ArrayList<BancaMemberDto>();
+        var bancaAdminList = new ArrayList<BancaMemberDto>();
+
+        members.forEach(member -> {
+            var user = member.getUsuario();
+            var bancaMember = new BancaMemberDto(
+                    user.getId(),
+                    user.getEmail(),
+                    user.getProntuario(),
+                    user.getUsername(),
+                    member.getStatusAgendamento(),
+                    null
+            );
+
+            if (member.getIsStudent()) {
+                bancaMember.setTipoMembro("participante");
+                participants.add(bancaMember);
+            } else if (member.getIsTeacher()) {
+                bancaMember.setTipoMembro("avaliador");
+                measurers.add(bancaMember);
+            }
+
+            if (member.getIsAdmin()) {
+                var adminMember = bancaMember.clone();
+                adminMember.setTipoMembro("adminDaBanca");
+                bancaAdminList.add(adminMember);
+            }
+        });
+
+        var memberSegmentedByRole = new HashMap<String, List<BancaMemberDto>>();
+        memberSegmentedByRole.put("alunos", participants);
+        memberSegmentedByRole.put("professores", measurers);
+        memberSegmentedByRole.put("administradores", bancaAdminList);
+
+        return memberSegmentedByRole;
     }
 }

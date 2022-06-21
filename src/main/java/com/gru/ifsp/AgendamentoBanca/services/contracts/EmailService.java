@@ -8,7 +8,7 @@ public interface EmailService {
 
     boolean sendEmailToConfirmChangesOnBanca(String email, Long bancaId, Long userId);
 
-    boolean sendDifferencesBetweenNewAndOldBancaUpdate(AgendamentoBanca oldBanca, AgendamentoBanca newBanca);
+    boolean sendDifferencesBetweenNewAndOldBancaUpdate(AgendamentoBanca oldBanca, AgendamentoBanca newBanca, String email);
 
     boolean sendCustomMessageEmail(String title, String description, String content, String email);
 }

@@ -2,6 +2,7 @@ package com.gru.ifsp.AgendamentoBanca.form;
 
 import com.gru.ifsp.AgendamentoBanca.dtos.UsuarioDto;
 import com.gru.ifsp.AgendamentoBanca.model.AgendamentoBanca;
+import com.gru.ifsp.AgendamentoBanca.util.StringDateUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,20 +23,18 @@ public class AgendamentoUsuariosForm {
     private String tema;
     private String dataAgendamento;
     private String statusAgendamento;
-    private List<UsuarioDto> listaParticipantes = new ArrayList<>();
-    private List<UsuarioDto> listaAvaliadores = new ArrayList<>();
-    private List<UsuarioDto> listaAdmins = new ArrayList<>();
+    private List<BancaMemberDto> listaParticipantes = new ArrayList<>();
+    private List<BancaMemberDto> listaAvaliadores = new ArrayList<>();
+    private List<BancaMemberDto> listaAdmins = new ArrayList<>();
 
-    private List<UsuarioDto> adminsBanca = new ArrayList<>();
-
-    public AgendamentoUsuariosForm(AgendamentoBanca banca, List<UsuarioDto> alunos, List<UsuarioDto> professores, List<UsuarioDto> listaAdmins){
+    public AgendamentoUsuariosForm(AgendamentoBanca banca, List<BancaMemberDto> alunos, List<BancaMemberDto> professores, List<BancaMemberDto> listaAdmins){
 
         this.id = banca.getId();
         this.titulo = banca.getTitulo();
         this.descricao = banca.getDescricao();
         this.tipoBanca = String.valueOf(banca.getTipoBanca());
         this.tema = banca.getTema();
-        this.dataAgendamento = banca.getDataAgendamento().toString();
+        this.dataAgendamento = banca.getDataAgendamento().format(StringDateUtils.formatter);
         this.statusAgendamento = String.valueOf(banca.getAgendamento());
         this.listaParticipantes.addAll(alunos);
         this.listaAvaliadores.addAll(professores);

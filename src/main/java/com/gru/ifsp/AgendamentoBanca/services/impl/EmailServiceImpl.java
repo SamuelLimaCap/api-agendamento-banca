@@ -9,7 +9,6 @@ import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.node.Visit;
 import lombok.AllArgsConstructor;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -60,7 +59,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public boolean sendDifferencesBetweenNewAndOldBancaUpdate(AgendamentoBanca oldBanca, AgendamentoBanca newBanca) {
+    public boolean sendDifferencesBetweenNewAndOldBancaUpdate(AgendamentoBanca oldBanca, AgendamentoBanca newBanca, String email) {
         var changedProperties = new ArrayList<String>();
 
         getDifferencesBetweenLists(oldBanca.getParticipantes(), newBanca.getParticipantes(), changedProperties, "participante");
@@ -73,10 +72,28 @@ public class EmailServiceImpl implements EmailService {
 
         getDifferenceBetweenFields(oldBanca, newBanca, changedProperties);
 
-        //TODO send changes in email
-        changedProperties.forEach(System.out::println);
-        return true;
 
+        try {
+            EmailTemplate template = new EmailTemplate(
+                    "Mudanças no banca " +oldBanca.getTitulo(),
+                    "Aqui estão as mudanças feitas na banca",
+                    changedProperties.stream().reduce("\n", (partialString, element) -> partialString + element),
+                    "",
+                    ""
+            );
+            MimeMessage smm = javaMailSender.createMimeMessage();
+            smm.setSubject("Você foi adicionado em uma banca");
+            MimeMessageHelper mmh = new MimeMessageHelper(smm, true);
+
+            mmh.setFrom("samuel.capusesera@aluno.ifsp.edu.br");
+            mmh.setTo(email);
+            mmh.setText(template.toString());
+            javaMailSender.send(smm);
+            return true;
+        } catch (MailException | MessagingException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override

@@ -109,7 +109,7 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
     private void sendEmailToParticipantsAndMeasurers(AgendamentoBanca banca, List<Usuario> participants, List<Usuario> measurers) {
         if (Constants.actualState.equalsIgnoreCase(Constants.productionState)) {
             sendEmailToEveryUserToConfirmBanca(participants, banca.getId());
-            sendEmailToEveryUserToConfirmBanca(participants, banca.getId());
+            sendEmailToEveryUserToConfirmBanca(measurers, banca.getId());
         }
     }
 
@@ -157,7 +157,7 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
         var banca = getById(id);
 
         var bancaMembers = usuariosParticipantesPorBancaRepository.getByIdAgendamentoBancaId(id);
-        var membersSegmentedByBancaRoles = UsuarioParticipantesPorBancaUtils.splitIntoBancaRoles(bancaMembers, banca.getId());
+        var membersSegmentedByBancaRoles = UsuarioParticipantesPorBancaUtils.splitMembersBasedOnBancaRoles(bancaMembers);
 
         var bancaListMembersForm = new AgendamentoUsuariosForm(
                 banca,
@@ -198,16 +198,24 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
             bancaUpdated.setAgendamento(StatusAgendamento.AGUARDANDO);
             agendamentoRepository.save(bancaUpdated);
         }
+
   
         bancaWithInformationUpdated = bancaUpdated.clone();
-        sendDifferencesBetweenBancas(oldBanca, bancaWithInformationUpdated);
 
-        bancaMembersListWithWaitingStatus.ifPresent(usuarioParticipantesPorBancas ->
-                sendEmailToEveryUserToConfirmBanca(
-                        usuarioParticipantesPorBancas.stream().map(UsuarioParticipantesPorBanca::getUsuario).collect(Collectors.toList()),
-                        banca.getId()
-                )
-        );
+        if (Constants.actualState.equalsIgnoreCase(Constants.productionState)) {
+            var listaParticipantes = usuariosParticipantesPorBancaRepository.getByIdAgendamentoBancaId(bancaUpdated.getId())
+                    .stream().map(x -> x.getUsuario()).collect(Collectors.toList());
+            sendDifferencesBetweenBancas(oldBanca, bancaWithInformationUpdated, listaParticipantes);
+
+            bancaMembersListWithWaitingStatus.ifPresent(usuarioParticipantesPorBancas ->
+                    sendEmailToEveryUserToConfirmBanca(
+                            usuarioParticipantesPorBancas.stream().map(UsuarioParticipantesPorBanca::getUsuario).collect(Collectors.toList()),
+                            banca.getId()
+                    )
+            );
+        }
+
+
         return bancaForm;
     }
 
@@ -259,8 +267,10 @@ public class AgendamentoBancaServiceImpl implements AgendamentoBancaService {
 
 
 
-    private void sendDifferencesBetweenBancas(AgendamentoBanca oldBanca, AgendamentoBanca bancaWithInformationUpdated) {
-        emailService.sendDifferencesBetweenNewAndOldBancaUpdate(oldBanca, bancaWithInformationUpdated);
+    private void sendDifferencesBetweenBancas(AgendamentoBanca oldBanca, AgendamentoBanca bancaWithInformationUpdated, List<Usuario> listaParticipantes) {
+        listaParticipantes.forEach(member ->
+            emailService.sendDifferencesBetweenNewAndOldBancaUpdate(oldBanca, bancaWithInformationUpdated, member.getEmail())
+        );
     }
 
     @Override

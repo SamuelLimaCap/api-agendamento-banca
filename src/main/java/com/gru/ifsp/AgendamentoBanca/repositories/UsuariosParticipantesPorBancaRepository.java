@@ -29,9 +29,6 @@ public interface UsuariosParticipantesPorBancaRepository extends JpaRepository<U
 
     List<UsuarioParticipantesPorBanca> getByIdAgendamentoBancaId(Long idBanca);
 
-    @Query(value = "SELECT USUARIO_ID FROM USUARIO_PARTICIPANTES_POR_BANCA WHERE BANCA_ID = ?1 AND IS_ADMIN = true", nativeQuery = true)
-    Long[] findAllByIsAdmin(Long idBanca);
-
     Optional<List<UsuarioParticipantesPorBanca>> findAllByIdAgendamentoBancaIdAndStatusAgendamentoEquals(Long banca_id, StatusAgendamento statusAgendamento);
 
     List<UsuarioParticipantesPorBanca> findAllByBancaIsAndIsTeacher(AgendamentoBanca banca, boolean isTeacher);
