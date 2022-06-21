@@ -23,27 +23,6 @@ public class AgendamentoBancaApplication {
         SpringApplication.run(AgendamentoBancaApplication.class, args);
     }
 
-    @Bean
-    CommandLineRunner run(UserRepository userRepository, PermissaoRepository permissaoRepository) {
-        return args -> {
-
-            permissaoRepository.saveAll(getAllPermissaoFromPermissaoEnum());
-            Permissao permissaoAdmin = permissaoRepository.getByCodeName(PermissaoEnum.ADMIN.name());
-            Permissao permissaoUsuario = permissaoRepository.getByCodeName(PermissaoEnum.USUARIO.name());
-
-            userRepository.save(
-                    new Usuario(null, "admin@admin.com", passwordEncoder().encode("admin"),
-                            true, List.of(permissaoAdmin)
-                    )
-            );
-            userRepository.save(
-                    new Usuario(null, "usuario@usuario.com", passwordEncoder().encode("usuario"),
-                            true, List.of(permissaoUsuario)
-                    )
-            );
-        };
-    }
-
     private List<Permissao> getAllPermissaoFromPermissaoEnum() {
         return Arrays.stream(PermissaoEnum.values())
                 .map(permissaoEnum -> new Permissao(null, permissaoEnum.name()))
