@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
-public class AgendamentoBanca {
+public class AgendamentoBanca implements Cloneable{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank(message = "Título não informado!")
@@ -48,6 +48,16 @@ public class AgendamentoBanca {
     @Enumerated(EnumType.STRING)
     private StatusAgendamento agendamento;
 
+    @Override
+    public AgendamentoBanca clone() {
+        try {
+            AgendamentoBanca clone = (AgendamentoBanca) super.clone();
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }
 
 

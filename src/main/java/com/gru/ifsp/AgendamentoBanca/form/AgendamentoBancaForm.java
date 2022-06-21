@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 
 @NoArgsConstructor
@@ -33,8 +34,11 @@ public class AgendamentoBancaForm {
     private Long[] listaIdAvaliadores;
     private StatusAgendamento statusAgendamento;
 
+    @NotNull(message = "É necessário informar os administradores da banca")
+    @Size(min = 1, message = "Toda banca deve conter pelo menos 1 administrador!")
+    private Long[] adminsBanca;
 
-    public AgendamentoBancaForm(String titulo, String descricao, TipoBanca tipoBanca, String tema, String dataAgendamento, Long[] listaIdParticipantes, Long[] listaIdAvaliadores, StatusAgendamento statusAgendamento) {
+    public AgendamentoBancaForm(String titulo, String descricao, TipoBanca tipoBanca, String tema, String dataAgendamento, Long[] listaIdParticipantes, Long[] listaIdAvaliadores, StatusAgendamento statusAgendamento, Long[] adminBanca) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.tipoBanca = tipoBanca;
@@ -43,6 +47,7 @@ public class AgendamentoBancaForm {
         this.listaIdParticipantes = listaIdParticipantes;
         this.listaIdAvaliadores = listaIdAvaliadores;
         this.statusAgendamento = statusAgendamento;
+        this.adminsBanca = adminBanca;
     }
 }
 

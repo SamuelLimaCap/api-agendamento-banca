@@ -49,7 +49,7 @@ public class UsuarioController {
     }
 
 
-    @DeleteMapping("/delete/{email}")
+    @DeleteMapping("/disable/{email}")
     @IsAdminOrCoordenator
     public ResponseEntity<Object> deleteUser(@PathVariable String email) {
         try {
