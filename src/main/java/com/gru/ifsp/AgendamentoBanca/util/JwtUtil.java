@@ -17,7 +17,7 @@ import static com.gru.ifsp.AgendamentoBanca.util.Constants.SECRET;
 public class JwtUtil {
 
     private static final int minutes = 60 * 1000;
-    private static final Long ACCESS_TOKEN_VALIDITY = 30L * minutes;
+    private static final Long ACCESS_TOKEN_VALIDITY = 60L * minutes;
     private static final Long REFRESH_TOKEN_VALIDITY = 60L * minutes;
 
     public static final Algorithm signatureAlgorithm = Algorithm.HMAC256(SECRET.getBytes());
@@ -29,9 +29,11 @@ public class JwtUtil {
 
     public static String generateAccessToken(Usuario user, String url) {
         return JWT.create()
+
                 .withSubject(user.getEmail())
                 .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
                 .withIssuer(url)
+                .withClaim("id", user.getId())
                 .sign(signatureAlgorithm);
     }
 
