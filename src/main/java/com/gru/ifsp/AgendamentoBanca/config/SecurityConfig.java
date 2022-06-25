@@ -4,6 +4,7 @@ import com.gru.ifsp.AgendamentoBanca.entity.springsecurity.filter.CorsFilter;
 import com.gru.ifsp.AgendamentoBanca.entity.springsecurity.filter.EmailPasswordAuthenticationFilter;
 import com.gru.ifsp.AgendamentoBanca.entity.springsecurity.filter.TokenAuthorizationFilter;
 import com.gru.ifsp.AgendamentoBanca.repositories.PermissaoRepository;
+import com.gru.ifsp.AgendamentoBanca.repositories.UserRepository;
 import com.gru.ifsp.AgendamentoBanca.services.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -28,11 +29,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     private final PermissaoRepository permissionRepository;
 
+    private final UserRepository userRepository;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
 
-        EmailPasswordAuthenticationFilter authenticationFilter = new EmailPasswordAuthenticationFilter(this.authenticationManagerBean(), permissionRepository);
+        EmailPasswordAuthenticationFilter authenticationFilter = new EmailPasswordAuthenticationFilter(this.authenticationManagerBean(), permissionRepository, userRepository);
         authenticationFilter.setFilterProcessesUrl(AUTH_ROUTE+"/login");
 
         http.csrf().disable();
