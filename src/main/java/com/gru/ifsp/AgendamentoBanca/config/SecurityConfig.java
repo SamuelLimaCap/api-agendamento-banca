@@ -3,6 +3,7 @@ package com.gru.ifsp.AgendamentoBanca.config;
 import com.gru.ifsp.AgendamentoBanca.entity.springsecurity.filter.CorsFilter;
 import com.gru.ifsp.AgendamentoBanca.entity.springsecurity.filter.EmailPasswordAuthenticationFilter;
 import com.gru.ifsp.AgendamentoBanca.entity.springsecurity.filter.TokenAuthorizationFilter;
+import com.gru.ifsp.AgendamentoBanca.repositories.PermissaoRepository;
 import com.gru.ifsp.AgendamentoBanca.services.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +25,8 @@ import static com.gru.ifsp.AgendamentoBanca.util.Constants.AUTH_ROUTE;
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     private final UserServiceImpl userDetailsService;
+
+    private final PermissaoRepository permissionRepository;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
