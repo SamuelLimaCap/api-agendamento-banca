@@ -34,6 +34,7 @@ public class JwtUtil {
                 .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
                 .withIssuer(url)
                 .withClaim("id", user.getId())
+                .withClaim("permissions", user.getPermissaoList())
                 .sign(signatureAlgorithm);
     }
 
