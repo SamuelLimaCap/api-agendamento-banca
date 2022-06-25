@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,12 @@ public class EmailPasswordAuthenticationFilter extends UsernamePasswordAuthentic
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
         AuthUser user = (AuthUser) authentication.getPrincipal();
+        user.getAuthorities()
+                .forEach(grantedAuthority -> {
+                    System.out.println(Arrays.toString(grantedAuthority.getAuthority().split("_")));
+                    System.out.println(grantedAuthority.getAuthority());
+                } );
+
         Usuario usuario = new Usuario(user.getId(), user.getUsername(), user.getPassword(), true,
                 user.getAuthorities().stream()
                         .map(authority -> permissionRepository.getByCodeName(authority.getAuthority().split("_")[1]) )
