@@ -35,7 +35,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         authenticationFilter.setFilterProcessesUrl(AUTH_ROUTE+"/login");
 
         http.csrf().disable();
-        http.authorizeRequests().antMatchers(AUTH_ROUTE+"/**", "/h2-console/**", "/auth/**").permitAll();
+        http.authorizeRequests()
+                .antMatchers(
+                        AUTH_ROUTE+"/**",
+                        "/h2-console/**",
+                        "/auth/**",
+                        "/public/**"
+                ).permitAll();
         http.authorizeRequests().anyRequest().authenticated();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.headers().frameOptions().disable();
