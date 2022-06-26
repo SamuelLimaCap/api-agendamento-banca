@@ -150,7 +150,7 @@ public class UsuarioService {
     }
 
     public List<EmailActivationCodeDto> getListOfUsersThatDoesntActivateAccount() {
-        var users = usuarioRepository.findAllByEnabledTrue();
+        var users = usuarioRepository.findAllByEnabledFalse();
 
         return users.stream()
                 .map((user) -> new EmailActivationCodeDto(user.getEmail(), user.getActivationCode()))

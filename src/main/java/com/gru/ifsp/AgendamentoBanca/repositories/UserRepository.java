@@ -14,6 +14,6 @@ public interface UserRepository extends JpaRepository<Usuario, Long> {
 
     boolean existsByProntuario(String prontuario);
 
-    List<Usuario> findAllByEnabledTrue();
+    List<Usuario> findAllByEnabledFalse();
 
 }
