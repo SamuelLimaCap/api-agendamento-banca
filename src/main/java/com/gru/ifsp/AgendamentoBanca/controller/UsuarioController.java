@@ -96,4 +96,11 @@ public class UsuarioController {
             return ResponserHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
         }
     }
+
+    @GetMapping("/needAccountActivation")
+    @IsAdminOrCoordenator
+    public ResponseEntity<Object> needAcountActivation() {
+        var response = usuarioService.getListOfUsersThatDoesntActivateAccount();
+        return ResponserHandler.generateResponse("Dados retornados com sucesso!!", HttpStatus.OK, response);
+    }
 }

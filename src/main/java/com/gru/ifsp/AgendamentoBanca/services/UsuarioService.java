@@ -1,5 +1,6 @@
 package com.gru.ifsp.AgendamentoBanca.services;
 
+import com.gru.ifsp.AgendamentoBanca.dtos.EmailActivationCodeDto;
 import com.gru.ifsp.AgendamentoBanca.form.UserActivationForm;
 import com.gru.ifsp.AgendamentoBanca.form.UsuarioForm;
 import com.gru.ifsp.AgendamentoBanca.model.Permissao;
@@ -148,4 +149,11 @@ public class UsuarioService {
         EmailSenderUtil.sendEmail(javaMailSender, email, newActivationCode);
     }
 
+    public List<EmailActivationCodeDto> getListOfUsersThatDoesntActivateAccount() {
+        var users = usuarioRepository.findAllByEnabledTrue();
+
+        return users.stream()
+                .map((user) -> new EmailActivationCodeDto(user.getEmail(), user.getActivationCode()))
+                .collect(Collectors.toList());
+    }
 }
