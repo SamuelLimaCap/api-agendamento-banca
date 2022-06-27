@@ -47,7 +47,7 @@ public class EmailServiceImpl implements EmailService {
             smm.setSubject("Você foi adicionado em uma banca");
             MimeMessageHelper mmh = new MimeMessageHelper(smm, true);
 
-            mmh.setFrom("samuel.capusesera@aluno.ifsp.edu.br");
+            mmh.setFrom("calendariodebanca@gmail.com");
             mmh.setTo(email);
             mmh.setText(template.toString());
             javaMailSender.send(smm);
@@ -85,7 +85,7 @@ public class EmailServiceImpl implements EmailService {
             smm.setSubject("Você foi adicionado em uma banca");
             MimeMessageHelper mmh = new MimeMessageHelper(smm, true);
 
-            mmh.setFrom("samuel.capusesera@aluno.ifsp.edu.br");
+            mmh.setFrom("calendariodebanca@gmail.com");
             mmh.setTo(email);
             mmh.setText(template.toString());
             javaMailSender.send(smm);
@@ -110,7 +110,7 @@ public class EmailServiceImpl implements EmailService {
             smm.setSubject("Você foi adicionado em uma banca");
             MimeMessageHelper mmh = new MimeMessageHelper(smm, true);
 
-            mmh.setFrom("samuel.capusesera@aluno.ifsp.edu.br");
+            mmh.setFrom("calendariodebanca@gmail.com");
             mmh.setTo(email);
             mmh.setText(template.toString());
             javaMailSender.send(smm);

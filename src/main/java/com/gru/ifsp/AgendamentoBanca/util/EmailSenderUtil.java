@@ -27,7 +27,7 @@ public class EmailSenderUtil {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setText(confirmationCode);
         message.setTo(email);
-        message.setFrom("samuel.capusesera@aluno.ifsp.edu.br");
+        message.setFrom("calendariodebanca@gmail.com");
 
         try {
             javaMailSender.send(message);

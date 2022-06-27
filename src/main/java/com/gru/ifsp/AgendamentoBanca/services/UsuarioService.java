@@ -146,7 +146,8 @@ public class UsuarioService {
             throw new RuntimeException("Este usuário já está ativo!");
 
         usuario.setActivationCode(newActivationCode);
-        EmailSenderUtil.sendEmail(javaMailSender, email, newActivationCode);
+        String confirmationLabel = "Código de confirmação:";
+        EmailSenderUtil.sendEmail(javaMailSender, email, confirmationLabel + newActivationCode);
     }
 
     public List<EmailActivationCodeDto> getListOfUsersThatDoesntActivateAccount() {
