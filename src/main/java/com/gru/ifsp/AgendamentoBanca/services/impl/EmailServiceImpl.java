@@ -40,8 +40,8 @@ public class EmailServiceImpl implements EmailService {
                     "Confirme sua inscrição para a banca",
                     "Clique no botão abaixo para confirmar sua inscrição",
                     "Status atual: AGUARDANDO",
-                    "http://localhost:8080/agendamentos/confirmar?id=" + bancaId + "&user=" + userId,
-                    "Clique aqui para confirmar sua inscrição"
+                    "",
+                    ""
             );
             MimeMessage smm = javaMailSender.createMimeMessage();
             smm.setSubject("Você foi adicionado em uma banca");
