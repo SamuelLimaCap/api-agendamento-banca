@@ -9,7 +9,7 @@ public class Constants {
     public static final String developmentState = "development";
     public static final String productionState = "production";
 
-    public static final String actualState = Constants.developmentState;
+    public static final String actualState = Constants.productionState;
 
     public static final int timeBetweenBancas = 50;
 }
